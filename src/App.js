@@ -125,8 +125,8 @@ function App() {
           <p>
             Have questions or want to connect? Feel free to drop me an email at:
           </p>
-          <a href="mailto:avi.email@example.com" className="email-link">
-            avi.email@example.com
+          <a href="mailto:paudela@union.edu" className="email-link">
+            paudela@union.edu
           </a>
         </div>
       </section>
