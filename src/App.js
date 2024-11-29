@@ -114,7 +114,6 @@ function App() {
           <div className="hobby-circle">Running</div>
           <div className="hobby-circle">Coding</div>
           <div className="hobby-circle">Socializing</div>
-          <div className="hobby-circle">Helping People</div>
         </div>
       </section>
 
