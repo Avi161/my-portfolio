@@ -76,7 +76,7 @@ function App() {
         <div className="resume-container">
           <h1 className="section-title">My Resume</h1>
           <p>You can download my resume or view it directly using the button below.</p>
-          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="resume-button">
+          <a href="/resumeCS.pdf" target="_blank" rel="noopener noreferrer" className="resume-button">
             Download Resume
           </a>
         </div>
