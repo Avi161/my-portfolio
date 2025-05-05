@@ -272,7 +272,7 @@ function App() {
               </p>
               <div className="about-stats">
                 <div className="stat">
-                  <span className="stat-number">1+</span>
+                  <span className="stat-number">2+</span>
                   <span className="stat-label">Years Experience</span>
                 </div>
                 <div className="stat">
@@ -367,11 +367,6 @@ function App() {
               <div className="timeline-date">Sept 2024 - Present</div>
               <h3>Undergraduate Research Assistant</h3>
               <p>Union College Department of Computer Science</p>
-              <ul>
-                <li>Researching algorithmic optimizations for matrix multiplication with a team of 6 student researchers</li>
-                <li>Implementing and evaluating the Cohn-Umans group-theoretic framework in C++ to improve matrix multiplication complexity</li>
-                <li>Analyzing Strong Uniquely Solvable Puzzles (SUSP) to reduce algorithmic complexity from O(n³) to O(n²·⁵⁰⁵)</li>
-              </ul>
             </div>
           </div>
           
@@ -381,11 +376,6 @@ function App() {
               <div className="timeline-date">Sept 2023 - Aug 2024</div>
               <h3>A-Levels Computer Science Tutor</h3>
               <p>Self-employed</p>
-              <ul>
-                <li>Developed and delivered personalized curriculum for A-Levels Computer Science to 3 students, resulting in average grade improvement of 15%</li>
-                <li>Created hands-on programming exercises in Python focusing on Object-Oriented Programming, Data Structures, and Algorithms</li>
-                <li>Designed bi-weekly assessment with targeted feedback loops, significantly increasing student concept retention</li>
-              </ul>
             </div>
           </div>
           
@@ -395,11 +385,6 @@ function App() {
               <div className="timeline-date">Aug 2023 - Nov 2023</div>
               <h3>Web Development Intern</h3>
               <p>Nobel Navigators</p>
-              <ul>
-                <li>Led development of two AI-themed interactive web projects for EXPO, engaging over 115 attendees and receiving 92% positive feedback</li>
-                <li>Engineered responsive websites using WordPress, implementing modern UI/UX design practices and custom CSS</li>
-                <li>Co-facilitated 5 training workshops for 20+ interns on leadership skills and WordPress development techniques</li>
-              </ul>
             </div>
           </div>
         </div>
@@ -411,14 +396,14 @@ function App() {
         <div className="projects-container">
           <ProjectCard 
             title="Smart Medication Management System"
-            description="Engineered an Automatic Pill Dispenser system with Arduino microcontroller and servo mechanisms for medication adherence targeting elderly and visually impaired users. Developed embedded C++ firmware implementing scheduled dispensing algorithms, emergency override protocols, and user authentication. Created iOS companion app using React Native and Firebase."
+            description="Engineered an Automatic Pill Dispenser system with Arduino microcontroller and servo mechanisms for medication adherence targeting elderly and visually impaired users. "
             technologies={['C++', 'Arduino', 'React Native', 'Firebase', 'REST API']}
             link="https://github.com/Avi161/engineering-wizards"
           />
           
           <ProjectCard 
             title="NLP-Powered Content Assistant"
-            description="Developed a Chrome extension that leverages GPT-4 API to summarize and translate web content across 5 languages. Implemented secure API integration with token management and rate limiting to optimize natural language processing workflows. Created intuitive UI with responsive design principles."
+            description="Developed a Chrome extension that leverages GPT-4 API to summarize and translate web content across 5 languages. "
             technologies={['JavaScript', 'HTML', 'CSS', 'Chrome Extension API', 'OpenAI API']}
             link="https://github.com/Avi161/AI-Summariser-and-Translator"
           />
@@ -432,8 +417,43 @@ function App() {
         </div>
       </AnimatedSection>
 
-      {/* Resume Section - Centered with Form */}
-      <AnimatedSection id="resume" className="resume-section text-center">
+      {/* Hobbies Section */}
+      <AnimatedSection id="hobbies" className="hobbies-section section">
+        <h1 className="section-title">Hobbies</h1>
+        <div className="floating-hobbies">
+          <div className="hobby-bubble" style={{animationDelay: '0s'}}>Chess</div>
+          <div className="hobby-bubble" style={{animationDelay: '1s'}}>Badminton</div>
+          <div className="hobby-bubble" style={{animationDelay: '2s'}}>Meditation</div>
+          <div className="hobby-bubble" style={{animationDelay: '3s'}}>Running</div>
+          <div className="hobby-bubble" style={{animationDelay: '4s'}}>Coding</div>
+          <div className="hobby-bubble" style={{animationDelay: '5s'}}>Socializing</div>
+        </div>
+      </AnimatedSection>
+
+      {/* Resume Section */}
+      <AnimatedSection id="resume" className="resume-section section text-center">
+        <h1 className="section-title">Resume</h1>
+        <div className="resume-container">
+          <div className="resume-content">
+            <p>
+              View my full resume to learn more about my experience, education, and skills.
+            </p>
+            <div className="resume-buttons">
+              <a 
+                href="/resume.pdf" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="resume-button"
+              >
+                <FaDownload style={{ marginRight: '8px' }} /> Download Resume
+              </a>
+            </div>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* Contact Me Section */}
+      <AnimatedSection id="contact-me" className="resume-section text-center">
         <div className="resume-container">
           <h1 className="section-title">Contact Me</h1>
           <div className="contact-form-wrapper">
@@ -501,7 +521,7 @@ function App() {
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
-          <p>© {new Date().getFullYear()} Avi Paudel. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} All rights reserved.</p>
           <div className="footer-links">
             <a href="#about-myself">About</a>
             <a href="#skills">Skills</a>

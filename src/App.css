@@ -831,6 +831,61 @@ a:hover {
   background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
 }
 
+/* Floating Hobbies to a horizontal line */
+.floating-hobbies {
+  min-height: 150px; /* Reduced from 300px */
+  position: relative;
+  margin: 40px auto;
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.hobby-bubble {
+  position: relative; /* Changed from absolute */
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px; /* Slightly smaller */
+  height: 100px; /* Slightly smaller */
+  font-weight: 600;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  animation: floatBubble 15s infinite ease-in-out;
+  opacity: 0.9;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Remove the individual positioning styles */
+.hobby-bubble:nth-child(1),
+.hobby-bubble:nth-child(2),
+.hobby-bubble:nth-child(3),
+.hobby-bubble:nth-child(4),
+.hobby-bubble:nth-child(5),
+.hobby-bubble:nth-child(6) {
+  position: relative;
+  top: auto;
+  left: auto;
+}
+
+/* Adjust animation to be more subtle for inline display */
+@keyframes floatBubble {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 /* Footer Enhancement */
 .footer {
   background-color: var(--section-bg);
@@ -968,4 +1023,43 @@ a:hover {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Resume Section */
+.resume-section .section-title {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.resume-content {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.resume-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.resume-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.resume-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
