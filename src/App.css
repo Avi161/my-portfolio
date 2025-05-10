@@ -83,92 +83,182 @@ a:hover {
   border: 1px solid #374151;
 }
 
-/* Header Icons and Theme Toggle Enhancement - Fixed for Light Mode */
+/* Header and Navbar positioning */
 .header-container {
-  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--white);
+  position: sticky;
   top: 0;
-  right: 0;
-  display: flex;
+  z-index: 1001;
+}
+
+/* Navbar base */
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: var(--navbar-bg, var(--white));
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 0;
+  height: 80px;
+}
+
+.dark-mode .navbar {
+  --navbar-bg: #1a1a2e;
+}
+
+/* Navbar container for layout - Switched to Grid */
+.navbar-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* Logo | Links (fills space) | Icons */
+  align-items: center; /* Vertically align all items */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px; /* Horizontal padding */
+  height: 100%; /* Take full height of navbar */
+  gap: 20px; /* Add some gap between grid columns if needed */
+}
+
+/* Left section: Logo */
+.nav-left {
+  display: flex; /* For internal alignment if logo had multiple parts */
   align-items: center;
-  padding: 20px;
-  z-index: 100;
-  gap: 20px;
+  justify-self: start; /* Align this grid item to the start */
 }
 
-.header-links {
+.logo {
+  font-weight: 800;
+  font-size: 1.8rem; /* Consider increasing if "AP" still feels small */
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.05);
+  text-decoration: none;
+}
+
+/* Center section: Navigation Links */
+.nav-center {
   display: flex;
-  gap: 15px;
-  margin-right: 15px;
-}
-
-/* Light mode styles */
-.light-mode .icon-link {
-  background-color: rgba(59, 130, 246, 0.1);
-  color: var(--primary-color);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.light-mode .toggle-button {
-  background-color: rgba(59, 130, 246, 0.1);
-  color: var(--primary-color);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-/* Dark mode styles */
-.dark-mode .icon-link {
-  background-color: rgba(31, 41, 55, 0.8);
-  color: var(--light-text);
-}
-
-.dark-mode .toggle-button {
-  background-color: rgba(31, 41, 55, 0.8);
-  color: var(--light-text);
-}
-
-.icon-link {
-  display: flex;
+  justify-content: center; /* Center links within this div */
   align-items: center;
-  justify-content: center;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  gap: 25px; /* Increased gap between links */
+  width: 100%; /* Ensure it tries to use the full space of its grid cell */
 }
 
-.icon-link:hover {
-  transform: translateY(-5px);
-  background-color: var(--primary-color);
-  color: white;
-  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2);
-  border: none;
-}
-
-.theme-toggle {
+.nav-center a {
   position: relative;
+  font-weight: 500;
+  padding: 8px 10px;
+  text-decoration: none;
+  color: var(--navbar-text, var(--dark-text));
+  transition: color 0.3s ease;
+  letter-spacing: 0.3px;
 }
 
-.toggle-button {
+.dark-mode .nav-center a {
+  --navbar-text: var(--light-text);
+}
+
+.nav-center a::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  transition: width 0.3s ease;
+  border-radius: 1px;
+}
+
+.nav-center a:hover::after,
+.nav-center a.active::after {
+  width: 80%;
+}
+
+.nav-center a:hover,
+.nav-center a.active {
+  color: var(--primary-color);
+}
+
+/* Right section: Icons */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Increased gap between icons */
+  justify-self: end; /* Align this grid item to the end */
+}
+
+/* Base icon style - Increased size */
+.icon-button {
+  width: 42px; /* Increased size */
+  height: 42px; /* Increased size */
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 45px;
-  height: 45px;
-  border: none;
-  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
   cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  background-color: transparent;
+  border: none;
+  padding: 0;
 }
 
-.toggle-button:hover {
-  transform: translateY(-5px) rotate(15deg);
-  background-color: var(--primary-color);
-  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2);
-  color: white;
-  border: none;
+.icon-button svg {
+  transition: color 0.2s ease;
+  /* The size of SVGs is often controlled by the `size` prop in React components, 
+     but you can try to force it if needed, e.g., width: 22px; height: 22px; */
+}
+
+/* Individual icon styles (hover effects remain the same) */
+.email-icon {
+  color: #4285F4;
+}
+.email-icon:hover {
+  background-color: rgba(66, 133, 244, 0.15);
+  transform: scale(1.1);
+}
+
+.linkedin-icon {
+  color: #0077B5;
+}
+.linkedin-icon:hover {
+  background-color: rgba(0, 119, 181, 0.15);
+  transform: scale(1.1);
+}
+
+.github-icon {
+  color: var(--navbar-text, #24292E);
+}
+.dark-mode .github-icon {
+   color: var(--light-text);
+}
+.github-icon:hover {
+  background-color: rgba(36, 41, 46, 0.15);
+  transform: scale(1.1);
+}
+.dark-mode .github-icon:hover {
+  background-color: rgba(200, 200, 200, 0.15);
+}
+
+/* Theme toggle specific styling */
+.theme-toggle {
+  color: var(--navbar-text, #FFC107); /* Sun color */
+}
+.dark-mode .theme-toggle {
+  color: #8690ff; /* Moon color */
+}
+.theme-toggle:hover {
+  background-color: rgba(255, 193, 7, 0.15); /* Sun hover */
+  transform: scale(1.1) rotate(15deg);
+}
+.dark-mode .theme-toggle:hover {
+  background-color: rgba(134, 144, 255, 0.15); /* Moon hover */
 }
 
 /* Enhanced visibility when scrolling */
@@ -176,6 +266,82 @@ a:hover {
 .header-container.scrolled .toggle-button {
   background-color: var(--primary-color);
   color: white;
+}
+
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle {
+  display: none; /* Hidden by default */
+  background: none;
+  border: none;
+  color: var(--navbar-text, var(--dark-text)); /* Adapts to light/dark mode */
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1005; /* Above mobile menu background */
+}
+
+.dark-mode .mobile-menu-toggle {
+  color: var(--light-text);
+}
+
+/* Mobile Menu Styles */
+.mobile-menu {
+  display: none; /* Hidden by default, shown by JS */
+  position: absolute;
+  top: 60px; /* Height of your navbar */
+  left: 0;
+  right: 0;
+  background-color: var(--navbar-bg, var(--white));
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 15px 0;
+  border-top: 1px solid var(--border-color, #eee);
+}
+
+.dark-mode .mobile-menu {
+  background-color: #1a1a2e; /* Dark mode background for mobile menu */
+  border-top: 1px solid #333;
+}
+
+.mobile-menu a {
+  display: block;
+  padding: 12px 25px;
+  text-decoration: none;
+  color: var(--navbar-text, var(--dark-text));
+  font-size: 1rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark-mode .mobile-menu a {
+  color: var(--light-text);
+}
+
+.mobile-menu a:hover {
+  background-color: var(--primary-color-light, rgba(59, 130, 246, 0.1));
+  color: var(--primary-color);
+}
+
+.mobile-menu-social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  padding: 15px 0;
+  border-top: 1px solid var(--border-color-light, #ddd);
+  margin-top: 10px;
+}
+.dark-mode .mobile-menu-social-icons {
+  border-top: 1px solid #3a3a50;
+}
+
+.mobile-menu-social-icons a {
+  padding: 5px; /* Reset padding for icon links */
+  color: var(--navbar-text, var(--dark-text));
+}
+.dark-mode .mobile-menu-social-icons a {
+  color: var(--light-text);
+}
+.mobile-menu-social-icons a:hover {
+  color: var(--primary-color);
+  background-color: transparent; /* No background on hover for these */
 }
 
 /* Responsive adjustments */
@@ -193,6 +359,49 @@ a:hover {
   .header-links {
     gap: 10px;
     margin-right: 10px;
+  }
+
+  .nav-center.desktop-nav {
+    display: none; /* Hide desktop nav links */
+  }
+
+  .icon-button.desktop-icon {
+    /* Optionally hide some desktop icons if nav-right gets too crowded,
+       or if you move them all into the mobile menu */
+    /* display: none; */
+  }
+
+  .mobile-menu-toggle {
+    display: block; /* Show hamburger icon */
+    margin-left: auto; /* Pushes it to the right if other icons are hidden */
+  }
+
+  .mobile-menu {
+    display: flex; /* Use flex for column layout */
+    flex-direction: column;
+  }
+
+  .navbar-container {
+    /* Adjust grid for mobile if needed, or rely on nav-right auto margin for toggle */
+    /* grid-template-columns: auto 1fr; */ /* Example: Logo and Toggle only */
+  }
+  .nav-right {
+    /* Ensure toggle is at the very end */
+    margin-left: auto; 
+  }
+}
+
+/* Further adjustments for very small screens if needed */
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.6rem; /* Slightly smaller logo */
+  }
+  .nav-right .icon-button { /* Reduce size of always-visible icons like theme toggle */
+    width: 36px;
+    height: 36px;
+  }
+  .nav-right .icon-button svg {
+    font-size: 18px; /* If react-icons size prop isn't enough */
   }
 }
 
@@ -1062,4 +1271,78 @@ a:hover {
   background-color: var(--primary-dark);
   transform: translateY(-3px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--white);
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: var(--white);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 15px 0;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 60px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--dark-text);
+  font-weight: 500;
+  position: relative;
+  padding: 5px 0;
+  text-decoration: none;
+}
+
+.nav-links a:hover, 
+.nav-links a.active {
+  color: var(--primary-color);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+.dark-mode .navbar {
+  background-color: #1a1a2e;
+}
+
+.dark-mode .nav-links a {
+  color: var(--light-text);
 }

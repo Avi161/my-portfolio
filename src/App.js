@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import MyNavbar from './components/Navbar';
+import { 
+  createBrowserRouter, 
+  RouterProvider, 
+  ScrollRestoration 
+} from 'react-router-dom';
+import MyNavbar from './components/MyNavbar';
+import BlogsPage from './pages/BlogsPage';
 import { FiMail } from 'react-icons/fi';
 import { FaLinkedin, FaGithub, FaMoon, FaSun, FaDownload } from 'react-icons/fa';
 import './App.css';
@@ -98,146 +104,123 @@ const Testimonial = ({ text, name, position }) => {
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [activeSection, setActiveSection] = useState('about-myself');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-  const [formStatus, setFormStatus] = useState({
-    submitting: false,
-    submitted: false,
-    error: null
-  });
+  // Define activeSection here at the App level
+  const [activeSection, setActiveSection] = useState('');
 
-  // Initialize theme from localStorage or system preference
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
+    
     if (savedTheme === 'dark') {
       setDarkMode(true);
-    } else if (!savedTheme) {
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDarkMode(prefersDark);
+    } else {
+      setDarkMode(false);
+      localStorage.setItem('theme', 'light');
     }
   }, []);
 
   const toggleTheme = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    setDarkMode(prevMode => {
+      const newMode = !prevMode;
+      console.log('Toggling theme to:', newMode ? 'dark' : 'light');
+      localStorage.setItem('theme', newMode ? 'dark' : 'light');
+      return newMode;
+    });
   };
 
-  // Handle scroll to update active section
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <>
+          {/* Pass all necessary props to HomePage */}
+          <HomePage 
+            darkMode={darkMode} 
+            toggleTheme={toggleTheme} 
+            activeSection={activeSection} 
+            setActiveSection={setActiveSection}
+          />
+          <ScrollRestoration />
+        </>
+      ),
+    },
+    {
+      path: "/blogs",
+      element: (
+        <>
+          <BlogsPage darkMode={darkMode} toggleTheme={toggleTheme} />
+          <ScrollRestoration />
+        </>
+      ),
+    },
+  ]);
+
+  return (
+    <div className={darkMode ? 'dark-mode' : 'light-mode'}>
+      <RouterProvider router={router} />
+    </div>
+  );
+}
+
+// Update HomePage to receive props
+const HomePage = ({ darkMode, toggleTheme, activeSection, setActiveSection }) => {
+  // Simplified form state for Formspree
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  
+  // Handle form submission for Formspree
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Get form data from the event
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    // Submit to Formspree
+    fetch("https://formspree.io/f/mnnddnvb", {
+      method: "POST",
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        setFormSubmitted(true);
+        form.reset(); // Clear the form
+      } else {
+        throw new Error('Form submission failed');
+      }
+    })
+    .catch(error => {
+      console.error("Form error:", error);
+      alert("Sorry, there was a problem submitting your form.");
+    });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
-      // Remove testimonials from the sections array
-      const sections = ['about-myself', 'skills', 'education', 'projects', 'experience', 'hobbies', 'contact-me'];
-      const headerContainer = document.querySelector('.header-container');
-      
-      // Add scrolled class when user scrolls down past hero section
-      if (window.scrollY > 100) {
-        headerContainer?.classList.add('scrolled');
-      } else {
-        headerContainer?.classList.remove('scrolled');
-      }
+      // Logic to determine which section is in view
+      const sections = ['about-myself', 'skills', 'education', 'experience', 'projects', 'contact-me'];
       
       for (const sectionId of sections) {
         const section = document.getElementById(sectionId);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= 150 && rect.bottom >= 150) {
-            setActiveSection(sectionId);
-            break;
-          }
+        if (section && window.scrollY >= section.offsetTop - 200) {
+          setActiveSection(sectionId);
         }
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [id]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setFormStatus({ submitting: true, submitted: false, error: null });
-    
-    // Using fetch to submit to Formspree
-    fetch('https://formspree.io/f/mnnddnvb', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        message: formData.message
-      })
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      setFormStatus({ 
-        submitting: false, 
-        submitted: true, 
-        error: null 
-      });
-      setFormData({ name: '', email: '', message: '' });
-      
-      // Reset form status after 5 seconds
-      setTimeout(() => {
-        setFormStatus(prev => ({ ...prev, submitted: false }));
-      }, 5000);
-    })
-    .catch(error => {
-      setFormStatus({ 
-        submitting: false, 
-        submitted: false, 
-        error: 'Failed to send message. Please try again.' 
-      });
-      console.error('Error:', error);
-    });
-  };
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [setActiveSection]);
 
   return (
-    <div className={darkMode ? 'dark-mode' : 'light-mode'}>
-      <MyNavbar activeSection={activeSection} />
+    <>
+      <MyNavbar 
+        activeSection={activeSection}
+        darkMode={darkMode}
+        toggleTheme={toggleTheme} 
+      />
       
-      {/* Header Container */}
-      <div className="header-container">
-        <div className="header-links">
-          <a href="mailto:paudela@union.edu" target="_blank" rel="noopener noreferrer" className="icon-link" aria-label="Email">
-            <FiMail size={20} className="icon" />
-          </a>
-          <a href="https://www.linkedin.com/in/avigya-paudel-531119306/" target="_blank" rel="noopener noreferrer" className="icon-link" aria-label="LinkedIn">
-            <FaLinkedin size={20} className="icon" />
-          </a>
-          <a href="https://github.com/Avi161" target="_blank" rel="noopener noreferrer" className="icon-link" aria-label="GitHub">
-            <FaGithub size={20} className="icon" />
-          </a>
-        </div>
-        <div className="theme-toggle">
-          <button onClick={toggleTheme} className="toggle-button" aria-label="Toggle theme">
-            {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
-          </button>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
@@ -457,63 +440,50 @@ function App() {
         <div className="resume-container">
           <h1 className="section-title">Contact Me</h1>
           <div className="contact-form-wrapper">
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input 
-                  type="text" 
-                  id="name"
-                  name="name" 
-                  placeholder="Your Name" 
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input 
-                  type="email" 
-                  id="email"
-                  name="email" 
-                  placeholder="Your Email" 
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="message">Message</label>
-                <textarea 
-                  id="message"
-                  name="message" 
-                  rows="5" 
-                  placeholder="Your Message" 
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  required
-                ></textarea>
-              </div>
-              <button 
-                className="contact-button" 
-                type="submit" 
-                disabled={formStatus.submitting}
-              >
-                {formStatus.submitting ? 'Sending...' : 'Send Message'}
-              </button>
-              
-              {formStatus.submitted && (
-                <div className="form-success">
-                  Message sent successfully! I'll get back to you soon.
+            {!formSubmitted ? (
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="name">Name</label>
+                  <input 
+                    type="text" 
+                    id="name"
+                    name="name" 
+                    placeholder="Your Name" 
+                    required
+                  />
                 </div>
-              )}
-              
-              {formStatus.error && (
-                <div className="form-error">
-                  {formStatus.error}
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input 
+                    type="email" 
+                    id="email"
+                    name="email" 
+                    placeholder="Your Email" 
+                    required
+                  />
                 </div>
-              )}
-            </form>
+                <div className="form-group">
+                  <label htmlFor="message">Message</label>
+                  <textarea 
+                    id="message"
+                    name="message" 
+                    rows="5" 
+                    placeholder="Your Message" 
+                    required
+                  ></textarea>
+                </div>
+                <button 
+                  className="contact-button" 
+                  type="submit"
+                >
+                  Send Message
+                </button>
+              </form>
+            ) : (
+              <div className="form-success">
+                Message sent successfully! I'll get back to you soon.
+              </div>
+            )}
           </div>
         </div>
       </AnimatedSection>
@@ -530,8 +500,8 @@ function App() {
           </div>
         </div>
       </footer>
-    </div>
+    </>
   );
-}
+};
 
 export default App;

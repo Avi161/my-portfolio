@@ -1,0 +1,36 @@
+/* Control carousel image size */
+.carousel-item img {
+  height: 700px; /* Set a fixed height for all images */
+  object-fit: contain; /* This crops the image while maintaining aspect ratio */
+  object-position: center; /* Center the image within the container */
+}
+
+/* Optional: For dark mode compatibility */
+.dark-mode .carousel-caption {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Add this to your BlogPostPage.css */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1); /* This inverts the white icon to black */
+}
+
+/* Optional: Make the carousel controls more visible against light backgrounds */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%; /* Makes the clickable area slightly narrower */
+  opacity: 0.8; /* Make them more visible */
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 1; /* Full opacity on hover */
+}
+
+.blog-page{
+    background-color: #f4f6e4;
+}
