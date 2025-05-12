@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   createBrowserRouter, 
   RouterProvider, 
-  ScrollRestoration 
+  ScrollRestoration, 
+  Route 
 } from 'react-router-dom';
 import MyNavbar from './components/MyNavbar';
 import BlogsPage from './pages/BlogsPage';
@@ -146,10 +147,11 @@ function App() {
     {
       path: "/blogs",
       element: (
-        <>
-          <BlogsPage darkMode={darkMode} toggleTheme={toggleTheme} />
+        // Force light mode wrapper for blog page
+        <div className="force-light-mode"> 
+          <BlogsPage darkMode={false} toggleTheme={toggleTheme} />
           <ScrollRestoration />
-        </>
+        </div>
       ),
     },
   ]);

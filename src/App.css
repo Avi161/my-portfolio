@@ -83,6 +83,50 @@ a:hover {
   border: 1px solid #374151;
 }
 
+/* This will override any dark mode styling for the blog page */
+.force-light-mode {
+  background-color: white !important;
+  color: black !important;
+}
+
+.force-light-mode * {
+  color: inherit;
+}
+
+/* Override specific dark mode styles */
+.force-light-mode h1,
+.force-light-mode h2,
+.force-light-mode h3,
+.force-light-mode p,
+.force-light-mode a {
+  color: black !important;
+}
+
+.force-light-mode .section-title {
+  color: black !important;
+}
+
+/* Make sure the carousel navigation arrows are visible */
+.force-light-mode .carousel-control-prev-icon,
+.force-light-mode .carousel-control-next-icon {
+  filter: invert(1) !important; /* Makes icons black instead of white */
+}
+
+/* Ensure carousel captions are readable */
+.force-light-mode .carousel-caption {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: black !important;
+}
+
+/* Additional overrides as needed */
+.force-light-mode button,
+.force-light-mode input,
+.force-light-mode textarea {
+  background-color: white !important;
+  color: black !important;
+  border-color: #ccc !important;
+}
+
 /* Header and Navbar positioning */
 .header-container {
   display: flex;
