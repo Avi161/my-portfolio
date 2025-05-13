@@ -5,40 +5,17 @@
   object-position: center; /* Center the image within the container */
 }
 
-
-
-
-
-/* Preserve the yellowish background and ensure light mode text */
-.light-mode-blog {
-  background-color: #f5f5dc !important; /* Light beige/cream color */
-  color: #000000 !important;
+.carousel{
+  background-color: bisque;
+}
+.carousel-indicators{
+  opacity: 0;
+}
+.blog-page{
+  background-color: bisque;
 }
 
-.navbar.navbar-light {
-  background-color: #f8f9fa !important; /* Match your MyNavbar.css light theme */
-  color: #333 !important; /* Match your MyNavbar.css light theme */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08) !important;
-}
-
-.navbar.navbar-light .navbar-brand,
-.navbar.navbar-light .nav-link {
-  color: #333 !important;
-}
-
-.navbar.navbar-light .nav-link:hover,
-.navbar.navbar-light .nav-link.active {
-  color: #007bff !important;
-}
-
-.navbar.navbar-light .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2851, 51, 51, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
-}
-
-.navbar.navbar-light .theme-toggle-button {
-  color: #333 !important;
-}
-.navbar.navbar-light .theme-toggle-button:hover {
-  background-color: rgba(0,0,0,0.05) !important;
+.carousel-caption{
+  background-color: bisque;
 }
 

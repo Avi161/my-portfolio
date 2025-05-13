@@ -92,6 +92,8 @@ const BlogsPage = ({}) => {
                     <button type="button" data-bs-target="#carouselFriends" data-bs-slide-to="1" aria-label="Slide 2"></button>
                     <button type="button" data-bs-target="#carouselFriends" data-bs-slide-to="2" aria-label="Slide 3"></button>
                     <button type="button" data-bs-target="#carouselFriends" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                    <button type="button" data-bs-target="#carouselFriends" data-bs-slide-to="4" aria-label="Slide 5"></button>
+                    <button type="button" data-bs-target="#carouselFriends" data-bs-slide-to="5" aria-label="Slide 6"></button>
                   </div>
                   <div class="carousel-inner">
                     <div class="carousel-item active">
@@ -109,14 +111,25 @@ const BlogsPage = ({}) => {
                       </div>
                     </div>
                     <div class="carousel-item">
-                      <img src={`${process.env.PUBLIC_URL}/blog/WheatGolub.jpg`} class="d-block w-100" alt="..."/>
+                      <img src={`${process.env.PUBLIC_URL}/blog/WheatLove.jpg`} class="d-block w-100" alt="..."/>
+                    
+                    </div>
+                    <div class="carousel-item">
+                      <img src={`${process.env.PUBLIC_URL}/blog/HsFriendsPDS.jpg`} class="d-block w-100" alt="..."/>
                       <div class="carousel-caption d-none d-md-block">
                         <h5>Third slide label</h5>
                         <p>Some representative placeholder content for the third slide.</p>
                       </div>
                     </div>
                     <div class="carousel-item">
-                      <img src={`${process.env.PUBLIC_URL}/blog/HsFriendsPDS.jpg`} class="d-block w-100" alt="..."/>
+                      <img src={`${process.env.PUBLIC_URL}/blog/Bowling.jpg`} class="d-block w-100" alt="..."/>
+                      <div class="carousel-caption d-none d-md-block">
+                        <h5>Third slide label</h5>
+                        <p>Some representative placeholder content for the third slide.</p>
+                      </div>
+                    </div>
+                    <div class="carousel-item">
+                      <img src={`${process.env.PUBLIC_URL}/blog/DashainJanakBaibhav.jpg`} class="d-block w-100" alt="..."/>
                       <div class="carousel-caption d-none d-md-block">
                         <h5>Third slide label</h5>
                         <p>Some representative placeholder content for the third slide.</p>
