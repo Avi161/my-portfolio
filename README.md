@@ -24,8 +24,10 @@ Welcome to my personal portfolio website! This project showcases my skills, proj
 ## 📸 Screenshots
 
 ### Home Page
-![Home Page Screenshot](path/to/homepage-screenshot.png)
+![image](https://github.com/user-attachments/assets/919b4173-71d1-4cb8-9462-ba19b90cd4fe)
+
 
 ### Blog Section
-![Blog Section Screenshot](path/to/blog-section-screenshot.png)
+![image](https://github.com/user-attachments/assets/157038b0-cb52-4189-9b48-3957f5b1a41b)
+
 
