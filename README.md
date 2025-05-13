@@ -21,5 +21,11 @@ Welcome to my personal portfolio website! This project showcases my skills, proj
 - **Email Integration**: EmailJS
 - **Hosting**: [Your Hosting Platform, e.g., GitHub Pages, Vercel, Netlify]
 
-## 📂 Project Structure
-my-website/ ├── src/ │ ├── components/ # Reusable components (e.g., Navbar, Footer) │ ├── pages/ # Pages (e.g., BlogsPage, HomePage) │ ├── App.js # Main application file │ ├── App.css # Global styles │ └── index.js # Entry point ├── public/ │ ├── blog/ # Blog images │ └── index.html # Main HTML file ├── package.json # Project dependencies └── README.md # Project documentation
+## 📸 Screenshots
+
+### Home Page
+![Home Page Screenshot](path/to/homepage-screenshot.png)
+
+### Blog Section
+![Blog Section Screenshot](path/to/blog-section-screenshot.png)
+
