@@ -195,16 +195,19 @@ a:hover {
 
 .nav-center a {
   position: relative;
-  font-weight: 500;
-  padding: 8px 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 12px;
   text-decoration: none;
   color: var(--navbar-text, var(--dark-text));
-  transition: color 0.3s ease;
-  letter-spacing: 0.3px;
+  transition: color 0.3s ease, transform 0.2s ease;
+  letter-spacing: 0.4px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.05);
 }
 
 .dark-mode .nav-center a {
   --navbar-text: var(--light-text);
+  text-shadow: none;
 }
 
 .nav-center a::after {
@@ -220,14 +223,10 @@ a:hover {
   border-radius: 1px;
 }
 
-.nav-center a:hover::after,
-.nav-center a.active::after {
-  width: 80%;
-}
-
 .nav-center a:hover,
 .nav-center a.active {
   color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 /* Right section: Icons */
@@ -348,20 +347,27 @@ a:hover {
 
 .mobile-menu a {
   display: block;
-  padding: 12px 25px;
+  padding: 12px 20px;
   text-decoration: none;
-  color: var(--navbar-text, var(--dark-text));
-  font-size: 1rem;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  color: var(--dark-text);
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-bottom: 1px solid #eee;
 }
 
 .dark-mode .mobile-menu a {
   color: var(--light-text);
+  border-bottom: 1px solid #333;
 }
 
 .mobile-menu a:hover {
-  background-color: var(--primary-color-light, rgba(59, 130, 246, 0.1));
+  background-color: var(--primary-light-hover, #e0e7ff);
   color: var(--primary-color);
+}
+
+.dark-mode .mobile-menu a:hover {
+  background-color: var(--primary-dark-hover, #2c3a6b);
 }
 
 .mobile-menu-social-icons {

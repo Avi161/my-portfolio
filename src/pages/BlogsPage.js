@@ -111,11 +111,11 @@ const BlogsPage = ({}) => {
                       </div>
                     </div>
                     <div class="carousel-item">
-                      <img src={`${process.env.PUBLIC_URL}/blog/WheatLove.jpg`} class="d-block w-100" alt="..."/>
+                      <img src={`${process.env.PUBLIC_URL}/blog/WheatLove.JPG`} class="d-block w-100" alt="..."/>
                     
                     </div>
                     <div class="carousel-item">
-                      <img src={`${process.env.PUBLIC_URL}/blog/HsFriendsPDS.JPG`} class="d-block w-100" alt="..."/>
+                      <img src={`${process.env.PUBLIC_URL}/blog/HsFriendsPDS.jpg`} class="d-block w-100" alt="..."/>
                       <div class="carousel-caption d-none d-md-block">
                         <h5>Third slide label</h5>
                         <p>Some representative placeholder content for the third slide.</p>

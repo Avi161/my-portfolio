@@ -5,17 +5,10 @@
   object-position: center; /* Center the image within the container */
 }
 
-.carousel{
-  background-color: bisque;
-}
 .carousel-indicators{
   opacity: 0;
 }
 .blog-page{
-  background-color: bisque;
-}
-
-.carousel-caption{
   background-color: bisque;
 }
 

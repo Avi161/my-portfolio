@@ -3,7 +3,9 @@ import {
   createBrowserRouter, 
   RouterProvider, 
   ScrollRestoration, 
-  Route 
+  Outlet,
+  useLocation,
+  useOutletContext
 } from 'react-router-dom';
 import MyNavbar from './components/MyNavbar';
 import BlogsPage from './pages/BlogsPage';
@@ -11,7 +13,6 @@ import { FiMail } from 'react-icons/fi';
 import { FaLinkedin, FaGithub, FaMoon, FaSun, FaDownload } from 'react-icons/fa';
 import './App.css';
 import profileImage from './components/me.png';
-import emailjs from '@emailjs/browser';
 
 // Component for animated section transitions
 const AnimatedSection = ({ id, className, children }) => {
@@ -103,91 +104,80 @@ const Testimonial = ({ text, name, position }) => {
   );
 };
 
-function App() {
-  const [darkMode, setDarkMode] = useState(false);
-  // Define activeSection here at the App level
-  const [activeSection, setActiveSection] = useState('');
+// New RootLayout component for global theme and structure
+const RootLayout = () => {
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark';
+  });
+  const location = useLocation();
+  const isBlogPage = location.pathname.startsWith('/blogs');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'dark') {
-      setDarkMode(true);
-    } else {
-      setDarkMode(false);
-      localStorage.setItem('theme', 'light');
-    }
-  }, []);
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   const toggleTheme = () => {
-    setDarkMode(prevMode => {
-      const newMode = !prevMode;
-      console.log('Toggling theme to:', newMode ? 'dark' : 'light');
-      localStorage.setItem('theme', newMode ? 'dark' : 'light');
-      return newMode;
-    });
+    setDarkMode(prevMode => !prevMode);
   };
+
+  const effectiveDarkMode = isBlogPage ? false : darkMode;
+  const themeClass = effectiveDarkMode ? 'dark-mode' : 'light-mode';
+
+  // Pass down effectiveDarkMode and toggleTheme via context
+  const contextValue = { darkMode: effectiveDarkMode, toggleTheme };
+
+  return (
+    <div className={themeClass}>
+      <Outlet context={contextValue} />
+      <ScrollRestoration />
+    </div>
+  );
+};
+
+function App() {
+  // activeSection and setActiveSection are now managed by HomePage
+  // darkMode and toggleTheme are managed by RootLayout
 
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: (
-        <>
-          {/* Pass all necessary props to HomePage */}
-          <HomePage 
-            darkMode={darkMode} 
-            toggleTheme={toggleTheme} 
-            activeSection={activeSection} 
-            setActiveSection={setActiveSection}
-          />
-          <ScrollRestoration />
-        </>
-      ),
-    },
-    {
-      path: "/blogs",
-      element: (
-        // Force light mode wrapper for blog page
-        <div className="force-light-mode"> 
-          <BlogsPage darkMode={false} toggleTheme={toggleTheme} />
-          <ScrollRestoration />
-        </div>
-      ),
+      element: <RootLayout />, // RootLayout provides theme and Outlet
+      children: [
+        {
+          path: "/",
+          element: <HomePage />, // Props like activeSection, darkMode, toggleTheme are handled internally or via context
+        },
+        {
+          path: "/blogs",
+          element: <BlogsPage />, // Will get darkMode=false and toggleTheme from context
+        },
+      ],
     },
   ]);
 
-  return (
-    <div className={darkMode ? 'dark-mode' : 'light-mode'}>
-      <RouterProvider router={router} />
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
-// Update HomePage to receive props
-const HomePage = ({ darkMode, toggleTheme, activeSection, setActiveSection }) => {
-  // Simplified form state for Formspree
+// Update HomePage to use context and manage its own activeSection
+const HomePage = () => {
+  const { darkMode, toggleTheme } = useOutletContext(); // Get theme from context
+  const [activeSection, setActiveSection] = useState(''); // Manage activeSection locally
   const [formSubmitted, setFormSubmitted] = useState(false);
   
-  // Handle form submission for Formspree
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Get form data from the event
     const form = e.target;
     const formData = new FormData(form);
     
-    // Submit to Formspree
     fetch("https://formspree.io/f/mnnddnvb", {
       method: "POST",
       body: formData,
-      headers: {
-        'Accept': 'application/json'
-      }
+      headers: { 'Accept': 'application/json' }
     })
     .then(response => {
       if (response.ok) {
         setFormSubmitted(true);
-        form.reset(); // Clear the form
+        form.reset();
       } else {
         throw new Error('Form submission failed');
       }
@@ -200,27 +190,42 @@ const HomePage = ({ darkMode, toggleTheme, activeSection, setActiveSection }) =>
 
   useEffect(() => {
     const handleScroll = () => {
-      // Logic to determine which section is in view
-      const sections = ['about-myself', 'skills', 'education', 'experience', 'projects', 'contact-me'];
-      
+      const sections = ['about-myself', 'skills', 'education', 'experience', 'projects', 'contact-me', 'hobbies', 'resume'];
+      let currentSection = ''; // Default to empty
+      const offset = window.innerHeight * 0.3; // 30% from the top of the viewport
+
       for (const sectionId of sections) {
         const section = document.getElementById(sectionId);
-        if (section && window.scrollY >= section.offsetTop - 200) {
-          setActiveSection(sectionId);
+        if (section) {
+          const sectionTop = section.offsetTop;
+          const sectionBottom = sectionTop + section.offsetHeight;
+          // Check if the top of the section is within the viewport (below the offset)
+          // and the bottom of the section is also somewhat visible or has been passed
+          if (window.scrollY >= sectionTop - offset && window.scrollY < sectionBottom - offset) {
+             currentSection = sectionId;
+             break; // Found the current section
+          }
         }
       }
+       // Fallback if no section is actively matched, e.g., for top of page or between sections
+      if (!currentSection && window.scrollY < document.getElementById(sections[0])?.offsetTop - offset) {
+        currentSection = ''; // Or specific ID like 'hero' if you have one
+      }
+      setActiveSection(currentSection);
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [setActiveSection]);
+  }, []); // No dependency on setActiveSection as it's from the same scope
+
 
   return (
     <>
       <MyNavbar 
-        activeSection={activeSection}
-        darkMode={darkMode}
-        toggleTheme={toggleTheme} 
+        activeSection={activeSection} // Use local activeSection
+        darkMode={darkMode} // From context
+        toggleTheme={toggleTheme} // From context
       />
       
       {/* Hero Section */}
@@ -255,20 +260,6 @@ const HomePage = ({ darkMode, toggleTheme, activeSection, setActiveSection }) =>
                 through technology. I believe in continuous learning and pushing boundaries
                 to create innovative applications that make a difference.
               </p>
-              <div className="about-stats">
-                <div className="stat">
-                  <span className="stat-number">2+</span>
-                  <span className="stat-label">Years Experience</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-number">5+</span>
-                  <span className="stat-label">Projects</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-number">4+</span>
-                  <span className="stat-label">Programming Languages</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -438,8 +429,8 @@ const HomePage = ({ darkMode, toggleTheme, activeSection, setActiveSection }) =>
       </AnimatedSection>
 
       {/* Contact Me Section */}
-      <AnimatedSection id="contact-me" className="resume-section text-center">
-        <div className="resume-container">
+      <AnimatedSection id="contact-me" className="resume-section text-center"> {/* Consider renaming id to "contact" if section title is "Contact Me" */}
+        <div className="resume-container"> {/* Consider a more generic class like "content-container" or "form-container" */}
           <h1 className="section-title">Contact Me</h1>
           <div className="contact-form-wrapper">
             {!formSubmitted ? (
@@ -498,7 +489,7 @@ const HomePage = ({ darkMode, toggleTheme, activeSection, setActiveSection }) =>
             <a href="#about-myself">About</a>
             <a href="#skills">Skills</a>
             <a href="#projects">Projects</a>
-            <a href="#contact-me">Contact</a>
+            <a href="#contact-me">Contact</a> {/* Ensure this matches an ID */}
           </div>
         </div>
       </footer>
