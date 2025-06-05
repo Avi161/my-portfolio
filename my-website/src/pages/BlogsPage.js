@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Blogs.css';
+import BlogCard from '../components/BlogCard'; // Import BlogCard
+import { blogPosts } from '../data/blogPosts'; // Import blogPosts
 
 const BlogsPage = () => {
   return (
@@ -19,22 +21,15 @@ const BlogsPage = () => {
       <div className="blog-content">
         <h1>My Blog Posts</h1>
         
-        {/* Sample Blog Cards */}
-        <div className="blog-card">
-          <img src="/blog-placeholder.jpg" alt="Blog thumbnail" />
-          <h2>Getting Started with React</h2>
-          <p>Posted on May 9, 2025</p>
-          <p>Learn the fundamentals of React and build your first component...</p>
-          <Link to="/blogs/react-fundamentals">Read More</Link>
-        </div>
-        
-        <div className="blog-card">
-          <img src="/blog-placeholder.jpg" alt="Blog thumbnail" />
-          <h2>My Journey as a CS Student</h2>
-          <p>Posted on May 5, 2025</p>
-          <p>Reflections on my experiences at Union College and what I've learned so far...</p>
-          <Link to="/blogs/cs-journey">Read More</Link>
-        </div>
+        {/* Render BlogCards from data */}
+        {blogPosts.map(post => (
+          <BlogCard
+            key={post.id}
+            title={post.title}
+            image={post.image}
+            excerpt={post.content.substring(0, 100) + '...'} // Create an excerpt
+          />
+        ))}
       </div>
     </div>
   );
