@@ -338,14 +338,21 @@ const HomePage = () => {
         <h1 className="section-title">Experience</h1>
         <div className="timeline">
           <div className="timeline-item">
+              <div className="timeline-dot"></div>
+              <div className="timeline-content">
+                <div className="timeline-date">June 2025 - Present</div>
+                <h3>Machine Learning Researcher</h3>
+                <p>Algoverse</p>
+              </div>
+            </div>
+          <div className="timeline-item">
             <div className="timeline-dot"></div>
             <div className="timeline-content">
-              <div className="timeline-date">Sept 2024 - Present</div>
+              <div className="timeline-date">Jan 2025 - Present</div>
               <h3>Undergraduate Research Assistant</h3>
               <p>Union College Department of Computer Science</p>
             </div>
           </div>
-          
           <div className="timeline-item">
             <div className="timeline-dot"></div>
             <div className="timeline-content">
@@ -358,7 +365,7 @@ const HomePage = () => {
           <div className="timeline-item">
             <div className="timeline-dot"></div>
             <div className="timeline-content">
-              <div className="timeline-date">Aug 2023 - Nov 2023</div>
+              <div className="timeline-date">June 2024 - Aug 2024</div>
               <h3>Web Development Intern</h3>
               <p>Nobel Navigators</p>
             </div>
