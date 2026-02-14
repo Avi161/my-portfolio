@@ -13,7 +13,7 @@
 
 body {
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 30px;
+  font-size: 26px;
   line-height: 1.75;
   color: #333;
   background-color: #fdf6e3;
@@ -32,7 +32,7 @@ a:hover {
 
 /* Layout */
 .site-container {
-  max-width: 750px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 0 24px;
   min-height: 100vh;
@@ -96,8 +96,8 @@ a:hover {
 
 /* ---- Home Page: Profile Image ---- */
 .profile-image {
-  width: 140px;
-  height: 140px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 24px;
