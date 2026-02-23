@@ -13,10 +13,10 @@
 
 body {
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 26px;
+  font-size: 20px;
   line-height: 1.75;
   color: #333;
-  background-color: #fdf6e3;
+  background-color: #f8f6ed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

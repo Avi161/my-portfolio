@@ -21,23 +21,19 @@ const HomePage = () => {
             <a href="https://www.union.edu/" target="_blank" rel="noopener noreferrer">
               Union College
             </a>
-            . I'm interested in AI Safety — understanding how to make sure advanced
-            AI systems remain safe and aligned.
+            . I'm passionate about AI Safety which is a field dedicated to ensuring current and future AI systems remains aligned with human values and do not cause unintended harm.
           </p>
           <p>
-            Currently, I'm a researcher at{' '}
-            <a href="https://aisafety.camp/" target="_blank" rel="noopener noreferrer">
-              AI Safety Camp
+            Currently, I'm a research fellow at{' '}
+            <a href="https://sparai.org/" target="_blank" rel="noopener noreferrer">
+              SPAR
             </a>
             , where I'm working on understanding how LLMs reason across different
             timescales. In particular, identifying when models shift into strategic,
-            long-term planning modes.
-          </p>
-          <p className="intro-links">
-            <a href="/Paudel_Avigya_CV.pdf" target="_blank" rel="noopener noreferrer">CV</a> &middot;{' '}
-            <a href="https://github.com/Avi161" target="_blank" rel="noopener noreferrer">GitHub</a> &middot;{' '}
-            <a href="https://www.linkedin.com/in/avigya-paudel-531119306/" target="_blank" rel="noopener noreferrer">LinkedIn</a> &middot;{' '}
-            <a href="mailto:paudela@union.edu">paudela@union.edu</a>
+            long-term planning modes. You can view our project repo at{' '} 
+            <a href="https://github.com/justinshenk/temporal-awareness" target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>.
           </p>
         </section>
       </div>
