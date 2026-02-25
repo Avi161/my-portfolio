@@ -6,7 +6,8 @@ const Header = () => (
     <div className="header-inner">
       <Link to="/" className="site-title">Avigya Paudel</Link>
       <nav className="site-nav">
-        <Link to="/">Blog</Link>
+        <Link to="/blog">Blog</Link>
+        <Link to="/projects">Projects</Link>
         <a href="https://github.com/Avi161" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href="mailto:paudela@union.edu">Contact</a>
       </nav>
