@@ -389,3 +389,247 @@ a:hover {
     font-size: 1.6rem;
   }
 }
+
+/* ============================================================
+   Tiers of AI Risk — interactive post styles
+   (scoped to .blog-post-content; pure CSS, no JS)
+   ============================================================ */
+
+/* tier palette (traffic-light) */
+.blog-post-content .risk-themed {
+  --t1: #d64545;
+  --t2: #e0922f;
+  --t3: #3f9d6d;
+}
+
+/* ---- the scatter board ---- */
+.blog-post-content .risk-board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.45 / 1;
+  min-height: 360px;
+  border-left: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  margin: 14px 0 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+/* tier zones (soft colored regions) */
+.blog-post-content .zone {
+  position: absolute;
+  border-radius: 50% 50% 48% 52%;
+  opacity: 0.13;
+  filter: blur(2px);
+}
+.blog-post-content .z1 { background: var(--t1); left: -2%; top: -2%; width: 46%; height: 52%; }
+.blog-post-content .z2 { background: var(--t2); left: 26%; top: 30%; width: 50%; height: 46%; }
+.blog-post-content .z3 { background: var(--t3); left: 60%; top: 58%; width: 44%; height: 48%; }
+
+/* zone caption */
+.blog-post-content .zone-tag {
+  position: absolute;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.blog-post-content .zone-tag.zt1 { left: 4%;  top: 3%;  color: var(--t1); }
+.blog-post-content .zone-tag.zt2 { left: 40%; top: 50%; color: var(--t2); }
+.blog-post-content .zone-tag.zt3 { left: 78%; top: 88%; color: var(--t3); }
+
+/* a plotted risk */
+.blog-post-content .rk {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.blog-post-content .rk.lbl-left { flex-direction: row-reverse; }
+
+.blog-post-content .rk-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.7);
+}
+.blog-post-content .rk.t1 .rk-dot { background: var(--t1); }
+.blog-post-content .rk.t2 .rk-dot { background: var(--t2); }
+.blog-post-content .rk.t3 .rk-dot { background: var(--t3); }
+
+/* speculative / off-axis risks: hollow dot */
+.blog-post-content .rk.spec .rk-dot {
+  background: #fff;
+}
+.blog-post-content .rk.spec.t1 .rk-dot { border: 2px dashed var(--t1); }
+.blog-post-content .rk.spec.t3 .rk-dot { border: 2px dashed var(--t3); }
+
+.blog-post-content .rk-lbl {
+  font-size: 0.66rem;
+  line-height: 1.1;
+  color: #333;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* axis labels */
+.blog-post-content .axis-y,
+.blog-post-content .axis-x {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.blog-post-content .axis-x {
+  text-align: center;
+  margin: 6px 0 2px;
+}
+.blog-post-content .axis-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  color: #bbb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.blog-post-content .board-wrap {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.blog-post-content .axis-y {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  padding: 4px 0;
+}
+
+/* tier legend */
+.blog-post-content .tier-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 18px 0 8px;
+  font-size: 0.8rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.blog-post-content .tier-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.blog-post-content .tier-legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.blog-post-content .lg1 { background: var(--t1); }
+.blog-post-content .lg2 { background: var(--t2); }
+.blog-post-content .lg3 { background: var(--t3); }
+
+/* ---- collapsible tiers & risks ---- */
+.blog-post-content details.tier {
+  border-left: 4px solid var(--tc, #ccc);
+  background: #fbfbfb;
+  border-radius: 0 6px 6px 0;
+  padding: 4px 18px;
+  margin: 16px 0;
+}
+.blog-post-content details.tier.tier1 { --tc: var(--t1); }
+.blog-post-content details.tier.tier2 { --tc: var(--t2); }
+.blog-post-content details.tier.tier3 { --tc: var(--t3); }
+
+.blog-post-content details.tier > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.blog-post-content details.tier > summary::-webkit-details-marker { display: none; }
+
+.blog-post-content .tier-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--tc);
+  padding: 2px 9px;
+  border-radius: 999px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.blog-post-content .tier-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111;
+}
+.blog-post-content .tier-tag {
+  display: block;
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 4px;
+  font-style: italic;
+}
+.blog-post-content summary .chev::before { content: '▸ '; color: var(--tc); }
+.blog-post-content details[open] > summary .chev::before { content: '▾ '; }
+
+.blog-post-content details.risk {
+  border-top: 1px solid #eee;
+  padding: 2px 0;
+}
+.blog-post-content details.risk > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 0;
+  font-weight: 600;
+  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.blog-post-content details.risk > summary::-webkit-details-marker { display: none; }
+.blog-post-content details.risk > summary::before {
+  content: '+';
+  display: inline-block;
+  width: 18px;
+  color: var(--tc);
+  font-weight: 700;
+}
+.blog-post-content details.risk[open] > summary::before { content: '–'; }
+.blog-post-content details.risk > p {
+  margin: 0 0 14px 18px;
+  font-size: 0.97rem;
+  color: #444;
+}
+
+/* meta "beyond the tiers" cards */
+.blog-post-content details.note {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 2px 16px;
+  margin: 12px 0;
+}
+.blog-post-content details.note > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 0;
+  font-weight: 600;
+  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.blog-post-content details.note > summary::-webkit-details-marker { display: none; }
+.blog-post-content details.note > summary::before { content: '▸ '; color: #999; }
+.blog-post-content details.note[open] > summary::before { content: '▾ '; }
+
+@media (max-width: 600px) {
+  .blog-post-content .rk-lbl { font-size: 0.58rem; }
+  .blog-post-content .risk-board { min-height: 320px; }
+}
