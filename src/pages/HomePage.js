@@ -16,23 +16,35 @@ const HomePage = () => {
         <img src={profileImage} alt="Avigya Paudel" className="profile-image" />
         <section className="intro">
           <p>
-            I'm <strong>Avi</strong>, a Computer Science and Mathematics
-            student at{' '}
+            I'm <strong>Avi</strong>, a CS and Math major at{' '}
             <a href="https://www.union.edu/" target="_blank" rel="noopener noreferrer">
               Union College
             </a>
-            . I'm passionate about AI Safety which is a field dedicated to ensuring current and future AI systems remains aligned with human values and do not cause unintended harm.
+            . I'm passionate about AI Safety which is a field dedicated to ensuring current and future AI systems do not cause unintended harm.
           </p>
           <p>
-            Currently, I'm a research fellow at{' '}
+            I'm currently a research intern at{' '}
+            <a href="https://math-ai.caltech.edu/" target="_blank" rel="noopener noreferrer">
+              Caltech's Math+AI Lab
+            </a>
+            , working under{' '}
+            <a href="https://gukov.caltech.edu/" target="_blank" rel="noopener noreferrer">
+              Dr. Sergei Gukov
+            </a>
+            . I am applying an AlphaZero-inspired value network and Monte Carlo Tree Search to find new solutions to the Andrews-Curtis Conjecture, and ultimately understand how AI can be used to solve research-level mathematics problems.
+          </p>
+          <p>
+            Previously, I was a research fellow at{' '}
             <a href="https://sparai.org/" target="_blank" rel="noopener noreferrer">
               SPAR
             </a>
-            , where I'm working on understanding how LLMs reason across different
-            timescales. In particular, identifying when models shift into strategic,
-            long-term planning modes. You can view our project repo at{' '}
-            <a href="https://github.com/justinshenk/temporal-awareness" target="_blank" rel="noopener noreferrer">
-              GitHub
+            , where I worked on understanding how LLMs reason across different timescales, specifically identifying when models shift into strategic, long-term planning modes. You can read more about the project{' '}
+            <a href="https://www.justinshenk.com/projects/spar-research" target="_blank" rel="noopener noreferrer">
+              here
+            </a>{' '}
+            and view the{' '}
+            <a href="https://arxiv.org/pdf/2606.05194" target="_blank" rel="noopener noreferrer">
+              paper
             </a>.
           </p>
         </section>
