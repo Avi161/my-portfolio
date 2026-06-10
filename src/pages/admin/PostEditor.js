@@ -4,6 +4,7 @@ import TipTapEditor, { EDITOR_EXTENSIONS } from './TipTapEditor';
 import { publishPost, deletePost } from './api';
 import { saveDraft, deleteDraft, newDraftId } from './drafts';
 import { extractImages } from './images';
+import { htmlToMarkdown, markdownToHtml } from './markdown';
 
 // 3.5MB client-side guard; the server rejects at 4MB, Vercel at 4.5MB.
 const MAX_PAYLOAD_BYTES = 3.5 * 1024 * 1024;
@@ -56,7 +57,20 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
   const [date, setDate] = useState((initial && initial.date) || localToday());
   const [summary, setSummary] = useState((initial && initial.summary) || '');
   const [content, setContent] = useState((initial && initial.content) || '');
-  const [mode, setMode] = useState(unsafeForRichMode ? 'html' : 'rich');
+  // Markdown is the default writing mode (Obsidian-style source editing);
+  // drafts remember their mode; custom-HTML posts fall back to HTML mode.
+  const [mode, setMode] = useState(
+    unsafeForRichMode ? 'html' : (initial && initial.mode) || 'markdown'
+  );
+  const [markdownText, setMarkdownText] = useState(() => {
+    if (initial && typeof initial.markdown === 'string') return initial.markdown;
+    if (unsafeForRichMode) return '';
+    try {
+      return htmlToMarkdown((initial && initial.content) || '');
+    } catch {
+      return '';
+    }
+  });
   const [status, setStatus] = useState(null); // { kind: 'info'|'error'|'success', text, link? }
   const [busy, setBusy] = useState(false);
   const [currentDraftId, setCurrentDraftId] = useState(draftId || null);
@@ -72,7 +86,13 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
   );
 
   const stateRef = useRef(null);
-  stateRef.current = { title, slug, date, summary, content, previousSlug };
+  stateRef.current = { title, slug, date, summary, content, previousSlug, mode, markdownText };
+
+  // The post body as HTML regardless of which mode it was written in.
+  function currentHtml() {
+    const s = stateRef.current;
+    return s.mode === 'markdown' ? markdownToHtml(s.markdownText) : s.content;
+  }
 
   const pollTimer = useRef(null);
   useEffect(() => () => clearTimeout(pollTimer.current), []);
@@ -81,7 +101,13 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
     const s = stateRef.current;
     const id = currentDraftId || newDraftId();
     if (!currentDraftId) setCurrentDraftId(id);
-    saveDraft({ id, ...s });
+    // content is always stored as HTML; markdown + mode are kept alongside so
+    // reopening a markdown draft shows the exact source you typed.
+    let html = s.content;
+    if (s.mode === 'markdown') {
+      try { html = markdownToHtml(s.markdownText); } catch { html = s.content; }
+    }
+    saveDraft({ id, ...s, content: html, markdown: s.markdownText });
     setDraftSavedAt(Date.now());
     return id;
   }, [currentDraftId]);
@@ -100,14 +126,31 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
       suppressAutosave.current = false;
       return undefined;
     }
-    if (!title && !content) return undefined;
+    if (!title && !content && !markdownText) return undefined;
     const timer = setTimeout(persistDraft, 2000);
     return () => clearTimeout(timer);
-  }, [title, slug, date, summary, content, persistDraft]);
+  }, [title, slug, date, summary, content, markdownText, persistDraft]);
 
   function handleTitleChange(value) {
     setTitle(value);
     if (!slugTouched && !slugLocked) setSlug(slugify(value));
+  }
+
+  function switchMode(next) {
+    if (next === mode) return;
+    suppressAutosave.current = true;
+    try {
+      if (mode === 'markdown') {
+        // Leaving markdown: materialize the source into HTML for rich/html views.
+        setContent(markdownToHtml(markdownText));
+      } else if (next === 'markdown') {
+        setMarkdownText(htmlToMarkdown(content));
+      }
+      setMode(next);
+    } catch (err) {
+      suppressAutosave.current = false;
+      setStatus({ kind: 'error', text: `Could not convert content: ${err.message}` });
+    }
   }
 
   async function waitForDeploy(liveSlug) {
@@ -148,12 +191,18 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
     const s = stateRef.current;
     if (!s.title.trim()) return setStatus({ kind: 'error', text: 'Title is required.' });
     if (!s.slug) return setStatus({ kind: 'error', text: 'Slug is required.' });
-    if (!s.content.trim()) return setStatus({ kind: 'error', text: 'Post body is empty.' });
+    let bodyHtml;
+    try {
+      bodyHtml = currentHtml();
+    } catch (err) {
+      return setStatus({ kind: 'error', text: `Markdown conversion failed: ${err.message}` });
+    }
+    if (!bodyHtml.trim()) return setStatus({ kind: 'error', text: 'Post body is empty.' });
 
     setBusy(true);
     setStatus({ kind: 'info', text: 'Preparing images…' });
     try {
-      const { html, images } = await extractImages(s.content, s.slug);
+      const { html, images } = await extractImages(bodyHtml, s.slug);
       const payload = {
         post: { slug: s.slug, title: s.title.trim(), date: s.date, summary: s.summary.trim(), content: html },
         previousSlug: s.previousSlug,
@@ -218,21 +267,26 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
         <div className="admin-mode-toggle">
           <button
             type="button"
+            className={mode === 'markdown' ? 'is-active' : ''}
+            onClick={() => switchMode('markdown')}
+          >Markdown</button>
+          <button
+            type="button"
             className={mode === 'rich' ? 'is-active' : ''}
-            onClick={() => setMode('rich')}
+            onClick={() => switchMode('rich')}
           >Rich</button>
           <button
             type="button"
             className={mode === 'html' ? 'is-active' : ''}
-            onClick={() => setMode('html')}
+            onClick={() => switchMode('html')}
           >HTML</button>
         </div>
       </div>
 
-      {unsafeForRichMode && mode === 'rich' && (
+      {unsafeForRichMode && mode !== 'html' && (
         <p className="admin-warning">
-          ⚠ This post contains custom HTML the rich editor will strip (e.g. interactive
-          elements). Saving from Rich mode will lose it — use HTML mode instead.
+          ⚠ This post contains custom HTML that Markdown/Rich editing will strip (e.g.
+          interactive elements). Saving from this mode will lose it — use HTML mode instead.
         </p>
       )}
       {unsafeForRichMode && mode === 'html' && (
@@ -282,9 +336,19 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
         />
       </label>
 
-      {mode === 'rich' ? (
+      {mode === 'rich' && (
         <TipTapEditor key={currentDraftId || previousSlug || 'new'} content={content} onChange={setContent} />
-      ) : (
+      )}
+      {mode === 'markdown' && (
+        <textarea
+          className="admin-html-textarea admin-markdown-textarea"
+          value={markdownText}
+          onChange={(e) => setMarkdownText(e.target.value)}
+          placeholder={'## Write markdown…\n\nJust like Obsidian. **Bold**, *italic*, [links](https://…), lists, > quotes, ``` code blocks.'}
+          spellCheck={true}
+        />
+      )}
+      {mode === 'html' && (
         <textarea
           className="admin-html-textarea"
           value={content}

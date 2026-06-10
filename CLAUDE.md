@@ -11,6 +11,7 @@ Deployed on **Vercel (Hobby plan)**. Domains: `avigya.vercel.app`, `www.avigyapa
 
 ## Blog admin (/admin)
 - Password-protected CMS at `/admin` (not linked in nav). Backend: `api/login.js` + `api/posts.js` (Vercel serverless, zero npm deps); helpers in `api/_lib/`. Frontend: `src/pages/admin/` (TipTap v3 editor).
+- Three editing modes: **Markdown** (default — Obsidian-style source, converted via `@tiptap/markdown` headless editors in `src/pages/admin/markdown.js`), **Rich** (TipTap WYSIWYG; markdown input rules work while typing), **HTML** (raw source; forced for posts whose custom HTML the TipTap schema would strip). Content is always stored/published as HTML; drafts additionally keep the markdown source + mode for faithful reopening.
 - Auth: `ADMIN_PASSWORD` env var (server-side only — NEVER `REACT_APP_`-prefix it, that bakes it into the public bundle). Stateless HMAC token, 12h, in sessionStorage. Changing the password instantly invalidates existing sessions.
 - Publishing commits `src/data/posts.json` (+ images under `public/images/blog/<slug>/`) to `main` via the GitHub Git Data API in ONE atomic commit, authored `Avi161 <paudela@union.edu>` with no trailer (Vercel Hobby constraint). Vercel auto-deploys; post is live in ~1–2 min.
 - Drafts are localStorage-only (private; repo is public). Images become data-URLs in the editor, extracted + downscaled at publish.

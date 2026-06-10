@@ -333,6 +333,12 @@
   resize: vertical;
 }
 
+.admin-markdown-textarea {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  padding: 1.25rem;
+}
+
 /* ---- Actions & status ---- */
 
 .admin-actions {
