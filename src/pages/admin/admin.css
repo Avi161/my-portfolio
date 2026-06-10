@@ -1,0 +1,377 @@
+/* Admin chrome only — post body styling comes from .blog-post-content in App.css */
+
+.admin-page {
+  padding: 1rem 0 4rem;
+}
+
+.admin-page h1 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 1.6rem;
+  color: #111;
+}
+
+.admin-page h2 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 1.1rem;
+  color: #111;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.admin-page button {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* ---- Login ---- */
+
+.admin-login {
+  max-width: 320px;
+  margin: 15vh auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-login input {
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* ---- Buttons ---- */
+
+.admin-primary-btn {
+  background: #4183c4;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1.1rem;
+}
+
+.admin-primary-btn:disabled {
+  background: #a8c4de;
+  cursor: default;
+}
+
+.admin-danger-btn {
+  background: none;
+  color: #c0392b;
+  border: 1px solid #e0b4ae;
+  border-radius: 4px;
+  padding: 0.35rem 0.8rem;
+}
+
+.admin-link-btn {
+  background: none;
+  border: none;
+  color: #4183c4;
+  padding: 0.35rem 0.5rem;
+}
+
+.admin-muted {
+  color: #999;
+  font-size: 0.85rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+/* ---- Post list ---- */
+
+.admin-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.75rem;
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.admin-row-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.7rem 0.25rem;
+}
+
+.admin-row-title {
+  color: #111;
+  font-size: 1rem;
+}
+
+.admin-row-main:hover .admin-row-title {
+  color: #4183c4;
+}
+
+/* ---- Editor ---- */
+
+.admin-editor-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.admin-mode-toggle button {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 0.3rem 0.9rem;
+}
+
+.admin-mode-toggle button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.admin-mode-toggle button:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+
+.admin-mode-toggle button.is-active {
+  background: #4183c4;
+  border-color: #4183c4;
+  color: #fff;
+}
+
+.admin-warning,
+.admin-notice {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  padding: 0.6rem 0.8rem;
+}
+
+.admin-warning {
+  background: #fdf3e7;
+  border: 1px solid #f0d4ac;
+  color: #8a5a1b;
+}
+
+.admin-notice {
+  background: #eef4fa;
+  border: 1px solid #cfe0ef;
+  color: #33597e;
+}
+
+.admin-title-input {
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111;
+  border: none;
+  outline: none;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 0.8rem;
+}
+
+.admin-meta-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.admin-meta-row label,
+.admin-summary-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.admin-meta-row input,
+.admin-summary-label textarea {
+  font-size: 0.95rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  color: #333;
+}
+
+.admin-slug-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.admin-meta-row input:disabled {
+  background: #f7f7f7;
+  color: #999;
+}
+
+.admin-summary-label {
+  margin-bottom: 1rem;
+}
+
+.admin-summary-label textarea {
+  resize: vertical;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* ---- Toolbar ---- */
+
+.admin-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px 6px 0 0;
+  padding: 0.35rem 0.5rem;
+}
+
+.admin-toolbar-sep {
+  width: 1px;
+  height: 1.2rem;
+  background: #e5e5e5;
+  margin: 0 0.35rem;
+}
+
+.admin-tool-btn {
+  background: none;
+  border: none;
+  border-radius: 4px;
+  min-width: 2rem;
+  padding: 0.3rem 0.45rem;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.admin-tool-btn:hover {
+  background: #f0f0f0;
+}
+
+.admin-tool-btn.is-active {
+  background: #e3edf7;
+  color: #4183c4;
+}
+
+.admin-tool-btn:disabled {
+  color: #ccc;
+  cursor: default;
+}
+
+.admin-link-input {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #e5e5e5;
+  border-top: none;
+  background: #fafafa;
+}
+
+.admin-link-input input {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.admin-bubble-menu {
+  display: flex;
+  gap: 0.1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  padding: 0.15rem;
+}
+
+/* ---- Editing surface ---- */
+
+.admin-editor-surface {
+  border: 1px solid #e5e5e5;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 1rem 1.25rem;
+}
+
+.admin-editor-surface .ProseMirror {
+  outline: none;
+  min-height: 50vh;
+}
+
+.admin-editor-surface .ProseMirror img {
+  max-width: 100%;
+}
+
+.admin-editor-surface .ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid #4183c4;
+}
+
+.admin-html-textarea {
+  width: 100%;
+  min-height: 55vh;
+  font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #333;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 1rem;
+  resize: vertical;
+}
+
+/* ---- Actions & status ---- */
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.admin-actions button {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  padding: 0.5rem 1.1rem;
+}
+
+.admin-actions .admin-primary-btn {
+  border: none;
+  background: #4183c4;
+}
+
+.admin-actions .admin-primary-btn:disabled {
+  background: #a8c4de;
+}
+
+.admin-status {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+.admin-status-error {
+  color: #c0392b;
+}
+
+.admin-status-success {
+  color: #27773d;
+}
+
+.admin-status-info {
+  color: #666;
+}

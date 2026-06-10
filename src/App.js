@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,6 +7,9 @@ import BlogsListPage from './pages/BlogsListPage';
 import BlogPostPage from './pages/BlogPostPage';
 import ProjectsPage from './pages/ProjectsPage';
 import './App.css';
+
+// Lazy so the editor (TipTap) never loads for regular visitors.
+const AdminPage = lazy(() => import('./pages/admin/AdminPage'));
 
 const Layout = () => (
   <div className="site-container">
@@ -26,6 +29,14 @@ const router = createBrowserRouter([
       { path: '/blog', element: <BlogsListPage /> },
       { path: '/blog/:slug', element: <BlogPostPage /> },
       { path: '/projects', element: <ProjectsPage /> },
+      {
+        path: '/admin',
+        element: (
+          <Suspense fallback={null}>
+            <AdminPage />
+          </Suspense>
+        ),
+      },
     ],
   },
 ]);

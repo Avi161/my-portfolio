@@ -105,16 +105,14 @@ async function savePost(req, res) {
   return res.status(200).json({ ok: true, commitSha });
 }
 
-function imagePathsIn(content, slug) {
+function imagePathsIn(content) {
   const paths = new Set();
   const re = /\/images\/blog\/([a-z0-9-]+\/[^"'\s)]+)/g;
   let match;
   while ((match = re.exec(content)) !== null) {
-    if (match[1].startsWith(`${slug}/`)) {
-      paths.add(`public/images/blog/${match[1]}`);
-    }
+    paths.add(`public/images/blog/${match[1]}`);
   }
-  return [...paths];
+  return paths;
 }
 
 async function deletePost(req, res) {
@@ -126,10 +124,15 @@ async function deletePost(req, res) {
   if (index === -1) return res.status(404).json({ error: 'not-found' });
 
   const [removed] = posts.splice(index, 1);
+  // Clean up the post's images (after a slug rename they can live under the
+  // old slug's directory), but never one still referenced by another post.
+  const stillReferenced = new Set(posts.flatMap((p) => [...imagePathsIn(p.content)]));
+  const deletePaths = [...imagePathsIn(removed.content)].filter((p) => !stillReferenced.has(p));
+
   const commitSha = await commitChanges({
     message: `blog: delete "${slug}"`,
     posts,
-    deletePaths: imagePathsIn(removed.content, slug),
+    deletePaths,
   });
   return res.status(200).json({ ok: true, commitSha });
 }
