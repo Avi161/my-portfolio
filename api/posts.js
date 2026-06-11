@@ -52,6 +52,15 @@ function validatePost(post, images) {
   if (typeof post.summary !== 'string') {
     return { error: 'invalid-summary', field: 'summary' };
   }
+  if (post.public !== undefined && typeof post.public !== 'boolean') {
+    return { error: 'invalid-public', field: 'public' };
+  }
+  if (post.category !== undefined && typeof post.category !== 'string') {
+    return { error: 'invalid-category', field: 'category' };
+  }
+  if (typeof post.category === 'string' && post.category.trim().length > 40) {
+    return { error: 'invalid-category', field: 'category' };
+  }
   for (const image of images) {
     // Each image carries either a pre-uploaded blob sha (normal path) or inline
     // base64 (small single-request publishes); exactly one must be present.
@@ -79,12 +88,19 @@ async function savePost(req, res) {
   if (invalid) return res.status(400).json(invalid);
 
   const posts = await readPosts();
+  // Optional fields are written only when meaningful so legacy posts (and
+  // posts toggled back to public/uncategorized) keep the minimal 5-field shape.
+  const category = typeof post.category === 'string'
+    ? post.category.trim().replace(/\s+/g, ' ')
+    : '';
   const clean = {
     slug: post.slug,
     title: post.title,
     date: post.date,
     summary: post.summary,
     content: post.content,
+    ...(category ? { category } : {}),
+    ...(post.public === false ? { public: false } : {}),
   };
 
   let message;

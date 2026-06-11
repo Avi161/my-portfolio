@@ -70,10 +70,39 @@
   padding: 0.35rem 0.5rem;
 }
 
+.admin-secondary-btn {
+  background: none;
+  color: #555;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.35rem 0.8rem;
+  white-space: nowrap;
+}
+
+.admin-secondary-btn:disabled {
+  color: #aaa;
+  cursor: default;
+}
+
 .admin-muted {
   color: #999;
   font-size: 0.85rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+.admin-badge {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.7rem;
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.admin-badge-private {
+  background: #fdf3e7;
+  border: 1px solid #f0d4ac;
+  color: #8a5a1b;
 }
 
 /* ---- Post list ---- */
@@ -208,6 +237,16 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+/* Match the meta-row input height so the Public/Private pair lines up. */
+.admin-visibility-toggle button {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.95rem;
+}
+
+.admin-visibility-hint {
+  margin-top: 0.5rem;
 }
 
 .admin-meta-row input:disabled {

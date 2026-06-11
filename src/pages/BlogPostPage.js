@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import blogPosts from '../data/blogPosts';
+import { allPosts } from '../data/blogPosts';
 
 const BlogPostPage = () => {
   const { slug } = useParams();
-  const post = blogPosts.find((p) => p.slug === slug);
+  // allPosts so unlisted (public: false) posts still render by direct URL.
+  const post = allPosts.find((p) => p.slug === slug);
 
   useEffect(() => {
     if (post) {
@@ -33,6 +34,17 @@ const BlogPostPage = () => {
       <header className="blog-post-header">
         <h1>{post.title}</h1>
         <time className="blog-post-date">{post.date}</time>
+        {post.category && (
+          <>
+            {' · '}
+            <Link
+              className="blog-post-category"
+              to={`/blog?section=${encodeURIComponent(post.category)}`}
+            >
+              {post.category}
+            </Link>
+          </>
+        )}
       </header>
       <div
         className="blog-post-content"

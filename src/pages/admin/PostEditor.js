@@ -58,7 +58,7 @@ function markdownWouldDropImageSizes(html) {
   return /<img[^>]*\s(width|height|data-align)=/.test(html || '');
 }
 
-export default function PostEditor({ initial, draftId, onBack, onSaved }) {
+export default function PostEditor({ initial, draftId, onBack, onSaved, categories = [] }) {
   const isPublished = Boolean(initial && initial.published);
   const unsafeForRichMode = useMemo(
     () => richModeWouldAlter((initial && initial.content) || ''),
@@ -71,6 +71,10 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
   const [slugLocked, setSlugLocked] = useState(isPublished);
   const [date, setDate] = useState((initial && initial.date) || localToday());
   const [summary, setSummary] = useState((initial && initial.summary) || '');
+  const [category, setCategory] = useState((initial && initial.category) || '');
+  // `public` is a reserved identifier; the post field stays `public`, the state
+  // is isPublic. Missing field means public (legacy posts have no flag).
+  const [isPublic, setIsPublic] = useState(!(initial && initial.public === false));
 
   // Pasted/inserted images live here as data URLs; the editable content and
   // markdown carry only short cimg://<id> placeholders, so the source stays
@@ -116,7 +120,7 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
   );
 
   const stateRef = useRef(null);
-  stateRef.current = { title, slug, date, summary, content, previousSlug, mode, markdownText };
+  stateRef.current = { title, slug, date, summary, content, previousSlug, mode, markdownText, category, public: isPublic };
 
   // The post body as HTML regardless of which mode it was written in.
   function currentHtml() {
@@ -161,7 +165,7 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
     if (!title && !content && !markdownText) return undefined;
     const timer = setTimeout(persistDraft, 2000);
     return () => clearTimeout(timer);
-  }, [title, slug, date, summary, content, markdownText, persistDraft]);
+  }, [title, slug, date, summary, content, markdownText, category, isPublic, persistDraft]);
 
   function handleTitleChange(value) {
     setTitle(value);
@@ -292,7 +296,15 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
       }
 
       const payload = {
-        post: { slug: s.slug, title: s.title.trim(), date: s.date, summary: s.summary.trim(), content: html },
+        post: {
+          slug: s.slug,
+          title: s.title.trim(),
+          date: s.date,
+          summary: s.summary.trim(),
+          content: html,
+          category: s.category.trim(),
+          public: s.public,
+        },
         previousSlug: s.previousSlug,
         images: uploaded,
       };
@@ -420,6 +432,35 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
           Date
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </label>
+        <label>
+          Section
+          <input
+            type="text"
+            list="admin-section-options"
+            maxLength={40}
+            placeholder="e.g. AI Safety"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
+          <datalist id="admin-section-options">
+            {categories.map((c) => <option key={c} value={c} />)}
+          </datalist>
+        </label>
+        <label>
+          Visibility
+          <span className="admin-mode-toggle admin-visibility-toggle">
+            <button
+              type="button"
+              className={isPublic ? 'is-active' : ''}
+              onClick={() => setIsPublic(true)}
+            >Public</button>
+            <button
+              type="button"
+              className={!isPublic ? 'is-active' : ''}
+              onClick={() => setIsPublic(false)}
+            >Private</button>
+          </span>
+        </label>
       </div>
 
       <label className="admin-summary-label">
@@ -474,6 +515,12 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
         )}
         {draftSavedAt && !status && <span className="admin-muted">Draft autosaved</span>}
       </div>
+
+      {!isPublic && (
+        <p className="admin-muted admin-visibility-hint">
+          This post will be unlisted — hidden from /blog, reachable by direct link.
+        </p>
+      )}
 
       {status && (
         <p className={`admin-status admin-status-${status.kind}`}>

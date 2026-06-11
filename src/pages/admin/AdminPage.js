@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import LoginForm from './LoginForm';
 import PostList from './PostList';
 import PostEditor from './PostEditor';
-import { getToken, clearToken, getPosts, deletePost, ApiError } from './api';
+import { getToken, clearToken, getPosts, publishPost, deletePost, ApiError } from './api';
 import { listDrafts, deleteDraft } from './drafts';
 import './admin.css';
 
@@ -11,6 +11,8 @@ export default function AdminPage() {
   const [posts, setPosts] = useState(null);
   const [drafts, setDrafts] = useState(listDrafts());
   const [loadError, setLoadError] = useState(null);
+  const [notice, setNotice] = useState(null);
+  const [togglingSlug, setTogglingSlug] = useState(null);
   // editing: { initial, draftId } — initial is the PostEditor seed object
   const [editing, setEditing] = useState(null);
 
@@ -62,6 +64,27 @@ export default function AdminPage() {
     setDrafts(listDrafts());
   }
 
+  async function handleToggleVisibility(post) {
+    setTogglingSlug(post.slug);
+    setLoadError(null);
+    setNotice(null);
+    try {
+      const nextPublic = post.public === false;
+      await publishPost({ post: { ...post, public: nextPublic }, previousSlug: post.slug });
+      // Mirror the server's stored shape: the field exists only when private.
+      setPosts((prev) => prev && prev.map((p) => (
+        p.slug === post.slug ? { ...p, public: nextPublic ? undefined : false } : p
+      )));
+      setNotice(`"${post.title}" is now ${nextPublic ? 'public' : 'private'} — live after the redeploy (~1–2 min).`);
+    } catch (err) {
+      if (!handleAuthError(err)) {
+        setLoadError(`Visibility change failed: ${(err.body && err.body.error) || err.message}`);
+      }
+    } finally {
+      setTogglingSlug(null);
+    }
+  }
+
   if (view === 'login') {
     return (
       <div className="admin-page">
@@ -79,6 +102,7 @@ export default function AdminPage() {
           draftId={editing && editing.draftId}
           onBack={() => setView('list')}
           onSaved={loadPosts}
+          categories={[...new Set((posts || []).map((p) => p.category).filter(Boolean))].sort()}
         />
       </div>
     );
@@ -91,6 +115,9 @@ export default function AdminPage() {
         drafts={drafts}
         loading={posts === null && !loadError}
         error={loadError}
+        notice={notice}
+        togglingSlug={togglingSlug}
+        onToggleVisibility={handleToggleVisibility}
         onNew={() => { setEditing(null); setView('editor'); }}
         onEditPost={(p) => { setEditing({ initial: { ...p, published: true } }); setView('editor'); }}
         onEditDraft={(d) => {
