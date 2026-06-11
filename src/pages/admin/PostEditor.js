@@ -297,7 +297,22 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
         images: uploaded,
       };
       setStatus({ kind: 'info', text: 'Publishing…' });
-      const { commitSha } = await publishPost(payload);
+      let result;
+      try {
+        result = await publishPost(payload);
+      } catch (err) {
+        // The post we meant to update is gone (e.g. a draft pointing at a since-
+        // deleted/renamed post). Fall back to publishing it as a new post — the
+        // server still guards against clobbering a different post via slug-exists.
+        if (err.body && err.body.error === 'not-found') {
+          payload.previousSlug = null;
+          result = await publishPost(payload);
+          setPreviousSlug(null);
+        } else {
+          throw err;
+        }
+      }
+      const { commitSha } = result;
       suppressAutosave.current = true;
       setContent(html); // placeholders/data-URLs were rewritten to /images/... paths
       setPreviousSlug(s.slug);
