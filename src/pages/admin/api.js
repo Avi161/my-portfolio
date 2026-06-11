@@ -54,6 +54,13 @@ export function getPosts() {
   return request('GET', '/api/posts');
 }
 
+// Uploads one image as a git blob and returns its sha. Images go up one request
+// at a time so no single request approaches Vercel's ~4.5MB body limit; publish
+// then sends only the (tiny) shas.
+export function uploadImageBlob(base64) {
+  return request('POST', '/api/posts', { action: 'blob', base64 });
+}
+
 export function publishPost(payload) {
   return withConflictRetry(() => request('POST', '/api/posts', payload));
 }

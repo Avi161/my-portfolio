@@ -42,6 +42,17 @@ async function readPosts() {
   return JSON.parse(Buffer.from(file.content, 'base64').toString('utf8'));
 }
 
+// Uploads one image as a git blob (no commit yet) and returns its sha. Called
+// once per image at publish so each request stays well under the size limit;
+// the shas are then bundled into a single commit by commitChanges.
+async function createBlob(base64) {
+  const blob = await gh('POST', `/repos/${REPO}/git/blobs`, {
+    content: base64,
+    encoding: 'base64',
+  });
+  return blob.sha;
+}
+
 // Builds one atomic commit containing the updated posts.json plus any image
 // additions/deletions, then fast-forwards the branch ref.
 async function commitChanges({ message, posts, addImages = [], deletePaths = [] }) {
@@ -57,11 +68,18 @@ async function commitChanges({ message, posts, addImages = [], deletePaths = [] 
   tree.push({ path: POSTS_PATH, mode: '100644', type: 'blob', sha: postsBlob.sha });
 
   for (const image of addImages) {
-    const blob = await gh('POST', `/repos/${REPO}/git/blobs`, {
-      content: image.base64,
-      encoding: 'base64',
-    });
-    tree.push({ path: image.path, mode: '100644', type: 'blob', sha: blob.sha });
+    // Images are normally uploaded ahead of time (one request each, to dodge
+    // the per-request size limit) and arrive here as a blob sha; fall back to
+    // inlining base64 for small single-request publishes.
+    let sha = image.sha;
+    if (!sha) {
+      const blob = await gh('POST', `/repos/${REPO}/git/blobs`, {
+        content: image.base64,
+        encoding: 'base64',
+      });
+      sha = blob.sha;
+    }
+    tree.push({ path: image.path, mode: '100644', type: 'blob', sha });
   }
   for (const path of deletePaths) {
     tree.push({ path, mode: '100644', type: 'blob', sha: null });
@@ -110,4 +128,4 @@ async function commitChanges({ message, posts, addImages = [], deletePaths = [] 
   return commit.sha;
 }
 
-module.exports = { readPosts, commitChanges, GitHubError };
+module.exports = { readPosts, createBlob, commitChanges, GitHubError };

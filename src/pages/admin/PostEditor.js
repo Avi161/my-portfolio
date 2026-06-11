@@ -1,13 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { generateHTML, generateJSON } from '@tiptap/core';
 import TipTapEditor, { EDITOR_EXTENSIONS } from './TipTapEditor';
-import { publishPost, deletePost } from './api';
+import { publishPost, deletePost, uploadImageBlob } from './api';
 import { saveDraft, deleteDraft, newDraftId } from './drafts';
-import { extractImages } from './images';
+import { extractImages, fileToDataUrl } from './images';
 import { htmlToMarkdown, markdownToHtml } from './markdown';
+import {
+  makeImageStore,
+  collapseImages,
+  expandImages,
+  addImage,
+  hasUnresolvedImages,
+} from './imageStore';
 
-// 3.5MB client-side guard; the server rejects at 4MB, Vercel at 4.5MB.
-const MAX_PAYLOAD_BYTES = 3.5 * 1024 * 1024;
+// Each image is uploaded in its own request now, so the per-image ceiling is
+// what matters (Vercel caps a request near 4.5MB); the post JSON is tiny.
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const DEPLOY_POLL_MS = 15000;
 const DEPLOY_POLL_LIMIT = 24; // ~6 minutes
 
@@ -63,7 +71,16 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
   const [slugLocked, setSlugLocked] = useState(isPublished);
   const [date, setDate] = useState((initial && initial.date) || localToday());
   const [summary, setSummary] = useState((initial && initial.summary) || '');
-  const [content, setContent] = useState((initial && initial.content) || '');
+
+  // Pasted/inserted images live here as data URLs; the editable content and
+  // markdown carry only short cimg://<id> placeholders, so the source stays
+  // readable and drafts/publish payloads stay small. The data URLs are restored
+  // at the two boundaries that need them: the rich editor and publish.
+  const imageStore = useRef(makeImageStore(initial && initial.images));
+
+  const [content, setContent] = useState(() =>
+    collapseImages((initial && initial.content) || '', imageStore.current)
+  );
   // Markdown is the default writing mode (Obsidian-style source editing);
   // drafts remember their mode; custom-HTML posts fall back to HTML mode;
   // posts with resized images open in rich mode so the sizes aren't lost.
@@ -74,10 +91,12 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
         || (markdownWouldDropImageSizes(initial && initial.content) ? 'rich' : 'markdown')
   );
   const [markdownText, setMarkdownText] = useState(() => {
-    if (initial && typeof initial.markdown === 'string') return initial.markdown;
+    if (initial && typeof initial.markdown === 'string') {
+      return collapseImages(initial.markdown, imageStore.current);
+    }
     if (unsafeForRichMode) return '';
     try {
-      return htmlToMarkdown((initial && initial.content) || '');
+      return collapseImages(htmlToMarkdown((initial && initial.content) || ''), imageStore.current);
     } catch {
       return '';
     }
@@ -118,7 +137,9 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
     if (s.mode === 'markdown') {
       try { html = markdownToHtml(s.markdownText); } catch { html = s.content; }
     }
-    saveDraft({ id, ...s, content: html, markdown: s.markdownText });
+    // images holds the data URLs the cimg:// placeholders point at; persisting
+    // it keeps a reopened draft's images intact on this device.
+    saveDraft({ id, ...s, content: html, markdown: s.markdownText, images: imageStore.current });
     setDraftSavedAt(Date.now());
     return id;
   }, [currentDraftId]);
@@ -171,6 +192,26 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
     }
   }
 
+  // Pasting an image into a source textarea: stash the bytes and drop a short
+  // cimg://<id> placeholder at the cursor instead of a wall of base64.
+  async function handleSourceImagePaste(event, setValue, makeRef) {
+    const files = [...((event.clipboardData && event.clipboardData.files) || [])]
+      .filter((f) => f.type.startsWith('image/'));
+    if (!files.length) return; // plain text/markdown paste — let the textarea handle it
+    event.preventDefault();
+    const { selectionStart, selectionEnd, value } = event.target;
+    try {
+      const refs = [];
+      for (const file of files) {
+        const dataUrl = await fileToDataUrl(file);
+        refs.push(makeRef(addImage(imageStore.current, dataUrl)));
+      }
+      setValue(value.slice(0, selectionStart) + refs.join('\n\n') + value.slice(selectionEnd));
+    } catch (err) {
+      setStatus({ kind: 'error', text: `Could not read pasted image: ${err.message}` });
+    }
+  }
+
   async function waitForDeploy(liveSlug) {
     let initialMain = null;
     try {
@@ -209,34 +250,56 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
     const s = stateRef.current;
     if (!s.title.trim()) return setStatus({ kind: 'error', text: 'Title is required.' });
     if (!s.slug) return setStatus({ kind: 'error', text: 'Slug is required.' });
-    let bodyHtml;
+    let tokenHtml;
     try {
-      bodyHtml = currentHtml();
+      tokenHtml = currentHtml();
     } catch (err) {
       return setStatus({ kind: 'error', text: `Markdown conversion failed: ${err.message}` });
     }
-    if (!bodyHtml.trim()) return setStatus({ kind: 'error', text: 'Post body is empty.' });
+    if (!tokenHtml.trim()) return setStatus({ kind: 'error', text: 'Post body is empty.' });
+    if (hasUnresolvedImages(tokenHtml, imageStore.current)) {
+      return setStatus({
+        kind: 'error',
+        text: 'Some images aren’t available on this device (the draft was started elsewhere). Re-add them before publishing.',
+      });
+    }
+    const bodyHtml = expandImages(tokenHtml, imageStore.current);
 
     setBusy(true);
     setStatus({ kind: 'info', text: 'Preparing images…' });
     try {
       const { html, images } = await extractImages(bodyHtml, s.slug);
-      const payload = {
-        post: { slug: s.slug, title: s.title.trim(), date: s.date, summary: s.summary.trim(), content: html },
-        previousSlug: s.previousSlug,
-        images,
-      };
-      if (JSON.stringify(payload).length > MAX_PAYLOAD_BYTES) {
+
+      // The blob request body is the base64 string; the server rejects bodies
+      // over MAX_BODY_BYTES, so check the encoded length to fail clearly here
+      // rather than mid-upload.
+      const oversized = images.find((img) => img.base64.length > MAX_IMAGE_BYTES);
+      if (oversized) {
         setBusy(false);
         return setStatus({
           kind: 'error',
-          text: 'Post is too large to publish in one go (>3.5MB). Remove or shrink some images.',
+          text: 'One image is too large to upload on its own. Shrink it and try again.',
         });
       }
+
+      // Upload each image as its own blob first so no single request approaches
+      // Vercel's size limit; publish then carries only the returned shas.
+      const uploaded = [];
+      for (let i = 0; i < images.length; i += 1) {
+        setStatus({ kind: 'info', text: `Uploading images (${i + 1}/${images.length})…` });
+        const { sha } = await uploadImageBlob(images[i].base64);
+        uploaded.push({ path: images[i].path, sha });
+      }
+
+      const payload = {
+        post: { slug: s.slug, title: s.title.trim(), date: s.date, summary: s.summary.trim(), content: html },
+        previousSlug: s.previousSlug,
+        images: uploaded,
+      };
       setStatus({ kind: 'info', text: 'Publishing…' });
       const { commitSha } = await publishPost(payload);
       suppressAutosave.current = true;
-      setContent(html); // data-URLs were rewritten to /images/... paths
+      setContent(html); // placeholders/data-URLs were rewritten to /images/... paths
       setPreviousSlug(s.slug);
       if (currentDraftId) {
         deleteDraft(currentDraftId);
@@ -355,14 +418,19 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
       </label>
 
       {mode === 'rich' && (
-        <TipTapEditor key={currentDraftId || previousSlug || 'new'} content={content} onChange={setContent} />
+        <TipTapEditor
+          key={currentDraftId || previousSlug || 'new'}
+          content={expandImages(content, imageStore.current)}
+          onChange={(html) => setContent(collapseImages(html, imageStore.current))}
+        />
       )}
       {mode === 'markdown' && (
         <textarea
           className="admin-html-textarea admin-markdown-textarea"
           value={markdownText}
           onChange={(e) => setMarkdownText(e.target.value)}
-          placeholder={'## Write markdown…\n\nJust like Obsidian. **Bold**, *italic*, [links](https://…), lists, > quotes, ``` code blocks.'}
+          onPaste={(e) => handleSourceImagePaste(e, setMarkdownText, (id) => `![](cimg://${id})`)}
+          placeholder={'## Write markdown…\n\nJust like Obsidian. **Bold**, *italic*, [links](https://…), lists, > quotes, ``` code blocks. Paste an image and it becomes a short ![](cimg://…) placeholder.'}
           spellCheck={true}
         />
       )}
@@ -371,6 +439,7 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
           className="admin-html-textarea"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          onPaste={(e) => handleSourceImagePaste(e, setContent, (id) => `<img src="cimg://${id}" alt="" />`)}
           placeholder="<p>Raw HTML…</p>"
           spellCheck={false}
         />

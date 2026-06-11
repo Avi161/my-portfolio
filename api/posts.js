@@ -1,5 +1,5 @@
 const { verifyAuth } = require('./_lib/auth');
-const { readPosts, commitChanges, GitHubError } = require('./_lib/github');
+const { readPosts, createBlob, commitChanges, GitHubError } = require('./_lib/github');
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -21,6 +21,9 @@ module.exports = async (req, res) => {
       return res.status(200).json({ posts });
     }
     if (req.method === 'POST') {
+      if (req.body && req.body.action === 'blob') {
+        return await uploadBlob(req, res);
+      }
       return await savePost(req, res);
     }
     if (req.method === 'DELETE') {
@@ -50,11 +53,14 @@ function validatePost(post, images) {
     return { error: 'invalid-summary', field: 'summary' };
   }
   for (const image of images) {
+    // Each image carries either a pre-uploaded blob sha (normal path) or inline
+    // base64 (small single-request publishes); exactly one must be present.
+    const hasSha = image && typeof image.sha === 'string' && image.sha;
+    const hasBase64 = image && typeof image.base64 === 'string' && image.base64;
     if (
       !image ||
       typeof image.path !== 'string' ||
-      typeof image.base64 !== 'string' ||
-      !image.base64 ||
+      (!hasSha && !hasBase64) ||
       image.path.includes('..') ||
       !IMAGE_PATH_RE.test(image.path)
     ) {
@@ -103,6 +109,18 @@ async function savePost(req, res) {
 
   const commitSha = await commitChanges({ message, posts, addImages: images });
   return res.status(200).json({ ok: true, commitSha });
+}
+
+// Uploads one image as a git blob and returns its sha. Splitting images into
+// their own requests keeps each one under the per-request size limit; the
+// publish call then references the shas and commits everything atomically.
+async function uploadBlob(req, res) {
+  const base64 = req.body && req.body.base64;
+  if (typeof base64 !== 'string' || !base64) {
+    return res.status(400).json({ error: 'missing-base64' });
+  }
+  const sha = await createBlob(base64);
+  return res.status(200).json({ ok: true, sha });
 }
 
 function imagePathsIn(content) {
