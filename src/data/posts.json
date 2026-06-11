@@ -1,5 +1,12 @@
 [
   {
+    "slug": "hi",
+    "title": "Hello World",
+    "date": "2026-06-10",
+    "summary": "Just a test",
+    "content": "<img src=\"/images/blog/hi/hi-1-7c2822ed.png\" width=\"471\" height=\"327\"><p></p>"
+  },
+  {
     "slug": "tiers-of-ai-risk",
     "title": "Tiers of AI Risk",
     "date": "2026-04-07",
