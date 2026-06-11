@@ -259,6 +259,28 @@ a:hover {
   border-radius: 4px;
 }
 
+/* Aligned images: text flows into the space beside a resized image. Resize the
+   image smaller first, then float it (a full-width float leaves no room). */
+.blog-post-content img[data-align="left"] {
+  float: left;
+  margin: 4px 24px 14px 0;
+}
+.blog-post-content img[data-align="right"] {
+  float: right;
+  margin: 4px 0 14px 24px;
+}
+/* Headings start a fresh line below a float; the ::after contains trailing
+   floats so the post footer never wraps beside an image. */
+.blog-post-content h2,
+.blog-post-content h3 {
+  clear: both;
+}
+.blog-post-content::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
 .blog-post-content a {
   color: #4183c4;
 }

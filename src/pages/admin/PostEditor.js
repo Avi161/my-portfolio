@@ -15,7 +15,8 @@ import {
 
 // Each image is uploaded in its own request now, so the per-image ceiling is
 // what matters (Vercel caps a request near 4.5MB); the post JSON is tiny.
-const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+// fileToDataUrl compresses well under this, so it's only a final safety net.
+const MAX_IMAGE_BYTES = 4.4 * 1024 * 1024;
 const DEPLOY_POLL_MS = 15000;
 const DEPLOY_POLL_LIMIT = 24; // ~6 minutes
 
@@ -51,11 +52,10 @@ function richModeWouldAlter(html) {
   }
 }
 
-// Markdown image syntax has no width/height, so converting to markdown drops
-// any drag-resize done in the rich editor and the image snaps back to full
-// width on publish.
+// Markdown image syntax (`![alt](src)`) has no width/height/alignment, so
+// converting to markdown drops any drag-resize or float done in the rich editor.
 function markdownWouldDropImageSizes(html) {
-  return /<img[^>]*\s(width|height)=/.test(html || '');
+  return /<img[^>]*\s(width|height|data-align)=/.test(html || '');
 }
 
 export default function PostEditor({ initial, draftId, onBack, onSaved }) {
@@ -178,7 +178,7 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
       } else if (next === 'markdown') {
         if (
           markdownWouldDropImageSizes(content)
-          && !window.confirm('This post has resized images. Markdown cannot keep image sizes — they will reset to full width. Switch anyway?')
+          && !window.confirm('This post has resized or aligned images. Markdown cannot keep image size/alignment — they reset to full width. Switch anyway?')
         ) {
           suppressAutosave.current = false;
           return;

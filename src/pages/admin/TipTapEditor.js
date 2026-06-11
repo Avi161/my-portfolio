@@ -5,9 +5,26 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { fileToDataUrl } from './images';
 
+// Adds a `data-align` attribute so an image can float left/right (text wraps
+// into the space beside it) or sit centered. It serializes as a plain attribute,
+// so it survives getHTML(), extractImages, and publish, and the same CSS styles
+// it in the editor and on the live post.
+const AlignableImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      align: {
+        default: null,
+        parseHTML: (el) => el.getAttribute('data-align'),
+        renderHTML: (attrs) => (attrs.align ? { 'data-align': attrs.align } : {}),
+      },
+    };
+  },
+});
+
 export const EDITOR_EXTENSIONS = [
   StarterKit.configure({ link: { openOnClick: false } }),
-  Image.configure({
+  AlignableImage.configure({
     allowBase64: true,
     // Built-in drag-to-resize: corner handles commit width/height attributes
     // on the <img>, which survive publishing as plain HTML.
@@ -22,6 +39,13 @@ export const EDITOR_EXTENSIONS = [
 function bubbleMenuShouldShow({ editor, state }) {
   const { empty, from, to } = state.selection;
   return !empty && !editor.isActive('image') && state.doc.textBetween(from, to).length > 0;
+}
+
+// Image alignment bar: shown only when an image node is selected. Stable
+// reference — BubbleMenu dispatches a transaction whenever shouldShow changes
+// identity, which loops forever with shouldRerenderOnTransaction: true.
+function imageBubbleShouldShow({ editor }) {
+  return editor.isActive('image');
 }
 
 function ToolButton({ active, disabled, onClick, title, children }) {
@@ -79,6 +103,20 @@ export default function TipTapEditor({ content, onChange }) {
   editorRef.current = editor;
 
   if (!editor) return null;
+
+  // The resize node view only applies attributes when it's first built, so
+  // updateAttributes alone won't repaint the editor (publish/reload are fine —
+  // they go through renderHTML). Reflect data-align onto the live <img> too so
+  // the float previews immediately while editing.
+  const setImageAlign = (align) => {
+    editor.chain().focus().updateAttributes('image', { align }).run();
+    const dom = editor.view.nodeDOM(editor.state.selection.from);
+    const img = dom && (dom.matches && dom.matches('img') ? dom : dom.querySelector && dom.querySelector('img'));
+    if (img) {
+      if (align) img.setAttribute('data-align', align);
+      else img.removeAttribute('data-align');
+    }
+  };
 
   const applyLink = () => {
     const url = (linkDraft || '').trim();
@@ -157,12 +195,24 @@ export default function TipTapEditor({ content, onChange }) {
         }}
       />
 
-      <BubbleMenu editor={editor} className="admin-bubble-menu" shouldShow={bubbleMenuShouldShow}>
+      <BubbleMenu editor={editor} pluginKey="textBubble" className="admin-bubble-menu" shouldShow={bubbleMenuShouldShow}>
         <ToolButton title="Bold" active={editor.isActive('bold')}
           onClick={() => editor.chain().focus().toggleBold().run()}><strong>B</strong></ToolButton>
         <ToolButton title="Italic" active={editor.isActive('italic')}
           onClick={() => editor.chain().focus().toggleItalic().run()}><em>i</em></ToolButton>
         <ToolButton title="Link" active={editor.isActive('link')} onClick={openLinkInput}>🔗</ToolButton>
+      </BubbleMenu>
+
+      <BubbleMenu editor={editor} pluginKey="imageBubble" className="admin-bubble-menu" shouldShow={imageBubbleShouldShow}>
+        <ToolButton title="Float left — text wraps on the right"
+          active={editor.getAttributes('image').align === 'left'}
+          onClick={() => setImageAlign('left')}>⬗ left</ToolButton>
+        <ToolButton title="Center (no wrap)"
+          active={!editor.getAttributes('image').align}
+          onClick={() => setImageAlign(null)}>▣ center</ToolButton>
+        <ToolButton title="Float right — text wraps on the left"
+          active={editor.getAttributes('image').align === 'right'}
+          onClick={() => setImageAlign('right')}>right ⬖</ToolButton>
       </BubbleMenu>
 
       <div className="blog-post-content admin-editor-surface">

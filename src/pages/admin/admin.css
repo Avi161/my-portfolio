@@ -363,6 +363,29 @@
 .admin-editor-surface [data-resize-handle="bottom-left"]  { transform: translate(-50%, 50%);  cursor: nesw-resize; }
 .admin-editor-surface [data-resize-handle="bottom-right"] { transform: translate(50%, 50%);   cursor: nwse-resize; }
 
+/* Image alignment mirrors the published .blog-post-content rules, but has to
+   float the resize node-view container (not just the <img>) so text wraps in
+   the editor too. :has() targets the container by the inner img's data-align. */
+.admin-editor-surface [data-resize-container]:has(img[data-align="left"]) {
+  float: left;
+  justify-content: flex-start;
+  width: fit-content;
+  margin: 4px 24px 14px 0;
+}
+.admin-editor-surface [data-resize-container]:has(img[data-align="right"]) {
+  float: right;
+  justify-content: flex-end;
+  width: fit-content;
+  margin: 4px 0 14px 24px;
+}
+.admin-editor-surface .ProseMirror h2,
+.admin-editor-surface .ProseMirror h3 { clear: both; }
+.admin-editor-surface .ProseMirror::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
 .admin-html-textarea {
   width: 100%;
   min-height: 55vh;

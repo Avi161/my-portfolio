@@ -5,7 +5,7 @@ const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const IMAGE_PATH_RE = /^public\/images\/blog\/[a-z0-9][a-z0-9./_-]*$/;
 // Vercel's hard request limit is 4.5MB; reject a bit under it.
-const MAX_BODY_BYTES = 4 * 1024 * 1024;
+const MAX_BODY_BYTES = 4.4 * 1024 * 1024;
 
 module.exports = async (req, res) => {
   if (!verifyAuth(req)) {
