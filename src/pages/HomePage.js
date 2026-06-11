@@ -23,7 +23,7 @@ const HomePage = () => {
             . I'm passionate about AI Safety which is a field dedicated to ensuring current and future AI systems do not cause unintended harm.
           </p>
           <p>
-            I'm currently a research intern at{' '}
+            I'm currently a researcher at{' '}
             <a href="https://math-ai.caltech.edu/" target="_blank" rel="noopener noreferrer">
               Caltech's Math+AI Lab
             </a>

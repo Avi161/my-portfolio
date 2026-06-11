@@ -7,8 +7,22 @@ import { fileToDataUrl } from './images';
 
 export const EDITOR_EXTENSIONS = [
   StarterKit.configure({ link: { openOnClick: false } }),
-  Image.configure({ allowBase64: true }),
+  Image.configure({
+    allowBase64: true,
+    // Built-in drag-to-resize: corner handles commit width/height attributes
+    // on the <img>, which survive publishing as plain HTML.
+    resize: { enabled: true, alwaysPreserveAspectRatio: true, minWidth: 80 },
+  }),
 ];
+
+// Text-formatting bubble menu: only for actual text selections, not images
+// (images get resize handles instead). Must be a stable reference — BubbleMenu
+// dispatches a transaction whenever this prop changes identity, which loops
+// forever with shouldRerenderOnTransaction: true.
+function bubbleMenuShouldShow({ editor, state }) {
+  const { empty, from, to } = state.selection;
+  return !empty && !editor.isActive('image') && state.doc.textBetween(from, to).length > 0;
+}
 
 function ToolButton({ active, disabled, onClick, title, children }) {
   return (
@@ -143,7 +157,7 @@ export default function TipTapEditor({ content, onChange }) {
         }}
       />
 
-      <BubbleMenu editor={editor} className="admin-bubble-menu">
+      <BubbleMenu editor={editor} className="admin-bubble-menu" shouldShow={bubbleMenuShouldShow}>
         <ToolButton title="Bold" active={editor.isActive('bold')}
           onClick={() => editor.chain().focus().toggleBold().run()}><strong>B</strong></ToolButton>
         <ToolButton title="Italic" active={editor.isActive('italic')}

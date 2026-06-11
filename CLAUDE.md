@@ -41,3 +41,17 @@ Deployed on **Vercel (Hobby plan)**. Domains: `avigya.vercel.app`, `www.avigyapa
 ### [2026-06-06] PR merge can use pre-force-push commits [TRAP]
 - Force-pushed a cleaned-up branch, but PR #5 was merged using the **original** (co-authored) commits before/around the push. Result: `main` carried the co-authored commits anyway.
 - **Rule:** If you rewrite a branch to fix something that matters for `main`, confirm the PR head matches the rewritten commits **before** merging, or fix it post-merge with a fresh clean commit on `main`.
+
+### [2026-06-10] BubbleMenu props must be referentially stable [TRAP]
+- **Symptom:** Switching to Rich mode crashed the whole admin with React error #185 (Maximum update depth exceeded), stack through `dispatchTransaction`.
+- **Root cause:** `<BubbleMenu shouldShow={inline arrow}>` — BubbleMenu's update effect lists `shouldShow` in its deps and **dispatches a transaction** whenever it changes identity. With `shouldRerenderOnTransaction: true` each render creates a new arrow → transaction → re-render → infinite loop.
+- **Rule:** Any function prop passed to `BubbleMenu`/`FloatingMenu` (`shouldShow`, `getReferencedVirtualElement`, …) must be module-level or memoized. See `bubbleMenuShouldShow` in `src/pages/admin/TipTapEditor.js`.
+
+### [2026-06-10] TipTap v3 image drag-to-resize is built in [WORKS]
+- `Image.configure({ resize: { enabled: true, alwaysPreserveAspectRatio: true, minWidth: 80 } })` gives corner drag-handles via a `ResizableNodeView`; commits plain `width`/`height` attributes on the `<img>`, which survive `editor.getHTML()`, `extractImages`, and publish.
+- The handles are **unstyled** (invisible 0×0 divs) — they require CSS on `[data-resize-handle]` / `[data-resize-wrapper]` / `[data-resize-container]` (see admin.css).
+- **[TRAP]** The node view inline-styles the container `visibility: hidden; pointer-events: none` until the img `onload` fires. After publishing, srcs are rewritten to `/images/...` which 404 until the Vercel deploy lands → images became invisible AND unselectable in the editor. Countered with `visibility: visible !important; pointer-events: auto !important` on `[data-resize-container]` in admin.css.
+- **[TRAP]** Markdown serialization (`renderMarkdown`) emits only `![alt](src)` — width/height are silently dropped. Guarded in `PostEditor.js`: posts whose HTML has `<img ... width=` open in Rich mode by default, and switching to Markdown asks for confirmation (`markdownWouldDropImageSizes`).
+
+### [2026-06-10] Simulating image paste in browser e2e [WORKS]
+- A synthetic `new ClipboardEvent('paste', { clipboardData: dataTransferWithFile, bubbles: true, cancelable: true })` dispatched on `.ProseMirror` exercises the real `handlePaste` path (verify with `ev.defaultPrevented === true`). Build the `File` synchronously from `canvas.toDataURL` + `atob` — async IIFEs in the javascript_tool eval context get their promise GC'd ("Promise was collected").

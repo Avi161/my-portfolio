@@ -314,11 +314,54 @@
 
 .admin-editor-surface .ProseMirror img {
   max-width: 100%;
+  /* the resize container carries the vertical rhythm; keeps handles flush */
+  margin: 0;
 }
 
-.admin-editor-surface .ProseMirror img.ProseMirror-selectednode {
+/* ---- Resizable image node view (TipTap image `resize`) ---- */
+
+.admin-editor-surface [data-resize-container] {
+  justify-content: center;
+  max-width: 100%;
+  margin: 24px 0;
+  /* The node view inline-hides images until they load, but right after
+     publishing the rewritten /images/... src 404s until the deploy lands —
+     without this the node is invisible and unselectable. */
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.admin-editor-surface [data-resize-wrapper] {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-editor-surface [data-resize-container].ProseMirror-selectednode img {
   outline: 2px solid #4183c4;
 }
+
+.admin-editor-surface [data-resize-handle] {
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 2px solid #4183c4;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.admin-editor-surface [data-resize-wrapper]:hover [data-resize-handle],
+.admin-editor-surface .ProseMirror-selectednode [data-resize-handle],
+.admin-editor-surface [data-resize-state="true"] [data-resize-handle] {
+  opacity: 1;
+}
+
+.admin-editor-surface [data-resize-handle="top-left"]     { transform: translate(-50%, -50%); cursor: nwse-resize; }
+.admin-editor-surface [data-resize-handle="top-right"]    { transform: translate(50%, -50%);  cursor: nesw-resize; }
+.admin-editor-surface [data-resize-handle="bottom-left"]  { transform: translate(-50%, 50%);  cursor: nesw-resize; }
+.admin-editor-surface [data-resize-handle="bottom-right"] { transform: translate(50%, 50%);   cursor: nwse-resize; }
 
 .admin-html-textarea {
   width: 100%;

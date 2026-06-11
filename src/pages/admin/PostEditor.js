@@ -43,6 +43,13 @@ function richModeWouldAlter(html) {
   }
 }
 
+// Markdown image syntax has no width/height, so converting to markdown drops
+// any drag-resize done in the rich editor and the image snaps back to full
+// width on publish.
+function markdownWouldDropImageSizes(html) {
+  return /<img[^>]*\s(width|height)=/.test(html || '');
+}
+
 export default function PostEditor({ initial, draftId, onBack, onSaved }) {
   const isPublished = Boolean(initial && initial.published);
   const unsafeForRichMode = useMemo(
@@ -58,9 +65,13 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
   const [summary, setSummary] = useState((initial && initial.summary) || '');
   const [content, setContent] = useState((initial && initial.content) || '');
   // Markdown is the default writing mode (Obsidian-style source editing);
-  // drafts remember their mode; custom-HTML posts fall back to HTML mode.
+  // drafts remember their mode; custom-HTML posts fall back to HTML mode;
+  // posts with resized images open in rich mode so the sizes aren't lost.
   const [mode, setMode] = useState(
-    unsafeForRichMode ? 'html' : (initial && initial.mode) || 'markdown'
+    unsafeForRichMode
+      ? 'html'
+      : (initial && initial.mode)
+        || (markdownWouldDropImageSizes(initial && initial.content) ? 'rich' : 'markdown')
   );
   const [markdownText, setMarkdownText] = useState(() => {
     if (initial && typeof initial.markdown === 'string') return initial.markdown;
@@ -144,6 +155,13 @@ export default function PostEditor({ initial, draftId, onBack, onSaved }) {
         // Leaving markdown: materialize the source into HTML for rich/html views.
         setContent(markdownToHtml(markdownText));
       } else if (next === 'markdown') {
+        if (
+          markdownWouldDropImageSizes(content)
+          && !window.confirm('This post has resized images. Markdown cannot keep image sizes — they will reset to full width. Switch anyway?')
+        ) {
+          suppressAutosave.current = false;
+          return;
+        }
         setMarkdownText(htmlToMarkdown(content));
       }
       setMode(next);

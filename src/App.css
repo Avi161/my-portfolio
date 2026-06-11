@@ -251,6 +251,14 @@ a:hover {
   padding: 0;
 }
 
+.blog-post-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 24px auto;
+  border-radius: 4px;
+}
+
 .blog-post-content a {
   color: #4183c4;
 }
