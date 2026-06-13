@@ -74,10 +74,12 @@ async function hash8(text) {
 }
 
 // Pulls data-URL images out of the post HTML and returns repo-relative file
-// entries for them, with the HTML srcs rewritten to the deployed /images/...
-// paths. Returns the input untouched when there's nothing to extract, so
-// hand-written HTML never gets re-serialized needlessly.
-export async function extractImages(html, slug) {
+// entries for them, with the HTML srcs rewritten to where they'll be served
+// from: the deployed /images/... path for public posts, or the authenticated
+// /api/image endpoint for private posts (whose files live in the private repo).
+// Returns the input untouched when there's nothing to extract, so hand-written
+// HTML never gets re-serialized needlessly.
+export async function extractImages(html, slug, isPrivate) {
   if (!html.includes('src="data:')) return { html, images: [] };
 
   const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -93,9 +95,14 @@ export async function extractImages(html, slug) {
     if (!match) continue;
     const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
     const base64 = match[2];
-    const path = `public/images/blog/${slug}/${slug}-${n}-${await hash8(base64)}.${ext}`;
-    images.push({ path, base64 });
-    img.setAttribute('src', `/${path.slice('public/'.length)}`);
+    const rel = `${slug}/${slug}-${n}-${await hash8(base64)}.${ext}`;
+    if (isPrivate) {
+      images.push({ path: `images/blog/${rel}`, base64 });
+      img.setAttribute('src', `/api/image?p=${rel}`);
+    } else {
+      images.push({ path: `public/images/blog/${rel}`, base64 });
+      img.setAttribute('src', `/images/blog/${rel}`);
+    }
     n += 1;
   }
   return { html: doc.body.innerHTML, images };

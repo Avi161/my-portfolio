@@ -272,7 +272,8 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
     setBusy(true);
     setStatus({ kind: 'info', text: 'Preparing images…' });
     try {
-      const { html, images } = await extractImages(bodyHtml, s.slug);
+      const isPrivate = !s.public;
+      const { html, images } = await extractImages(bodyHtml, s.slug, isPrivate);
 
       // The blob request body is the base64 string; the server rejects bodies
       // over MAX_BODY_BYTES, so check the encoded length to fail clearly here
@@ -291,7 +292,7 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
       const uploaded = [];
       for (let i = 0; i < images.length; i += 1) {
         setStatus({ kind: 'info', text: `Uploading images (${i + 1}/${images.length})…` });
-        const { sha } = await uploadImageBlob(images[i].base64);
+        const { sha } = await uploadImageBlob(images[i].base64, isPrivate);
         uploaded.push({ path: images[i].path, sha });
       }
 
@@ -326,17 +327,27 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
       }
       const { commitSha } = result;
       suppressAutosave.current = true;
-      setContent(html); // placeholders/data-URLs were rewritten to /images/... paths
+      setContent(html); // placeholders/data-URLs were rewritten to their served paths
       setPreviousSlug(s.slug);
       if (currentDraftId) {
         deleteDraft(currentDraftId);
         setCurrentDraftId(null);
       }
-      setStatus({
-        kind: 'info',
-        text: `Committed ${commitSha.slice(0, 7)} — deploying, usually ~1–2 min…`,
-      });
-      waitForDeploy(s.slug);
+      if (isPrivate) {
+        // Private posts live in the private repo and are fetched at runtime —
+        // no Vercel redeploy involved, so they're readable immediately.
+        setStatus({
+          kind: 'success',
+          text: `Committed ${commitSha.slice(0, 7)} to the private repo — live now, visible only while logged in.`,
+          link: `/blog/${s.slug}`,
+        });
+      } else {
+        setStatus({
+          kind: 'info',
+          text: `Committed ${commitSha.slice(0, 7)} — deploying, usually ~1–2 min…`,
+        });
+        waitForDeploy(s.slug);
+      }
       onSaved && onSaved();
     } catch (err) {
       const detail = err.body && err.body.error;
@@ -518,7 +529,8 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
 
       {!isPublic && (
         <p className="admin-muted admin-visibility-hint">
-          This post will be unlisted — hidden from /blog, reachable by direct link.
+          This post will be private — stored in your private repo (never the public one)
+          and visible on the site only while you're logged in to /admin.
         </p>
       )}
 

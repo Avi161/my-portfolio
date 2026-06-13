@@ -1,14 +1,35 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { publicPosts } from '../data/blogPosts';
-
-const sections = [...new Set(publicPosts.map((p) => p.category).filter(Boolean))]
-  .sort((a, b) => a.localeCompare(b));
+import { getPrivatePosts, hasAdminSession } from './admin/api';
 
 const BlogsListPage = () => {
   const [searchParams] = useSearchParams();
   const active = searchParams.get('section');
-  const shown = active ? publicPosts.filter((p) => p.category === active) : publicPosts;
+
+  // With an admin session, private posts (fetched at runtime — they're never
+  // in the bundle) appear in the list too, marked Private. Visitors without a
+  // session never make the request.
+  const [privatePosts, setPrivatePosts] = useState([]);
+  useEffect(() => {
+    if (!hasAdminSession()) return undefined;
+    let alive = true;
+    getPrivatePosts()
+      .then((data) => alive && setPrivatePosts(data.posts))
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  const posts = useMemo(
+    () => [...publicPosts, ...privatePosts].sort((a, b) => b.date.localeCompare(a.date)),
+    [privatePosts]
+  );
+  const sections = useMemo(
+    () => [...new Set(posts.map((p) => p.category).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b)),
+    [posts]
+  );
+  const shown = active ? posts.filter((p) => p.category === active) : posts;
 
   return (
     <div className="blog-list-page">
@@ -35,6 +56,15 @@ const BlogsListPage = () => {
               <Link to={`/blog/${post.slug}`} className="blog-entry-title">
                 {post.title}
               </Link>
+              {post.category && (
+                <Link
+                  to={`/blog?section=${encodeURIComponent(post.category)}`}
+                  className="blog-entry-category"
+                >
+                  {post.category}
+                </Link>
+              )}
+              {post.public === false && <span className="blog-post-private">Private</span>}
               <span className="blog-entry-date">{post.date}</span>
             </div>
             <p className="blog-entry-summary">{post.summary}</p>

@@ -75,7 +75,9 @@ export default function AdminPage() {
       setPosts((prev) => prev && prev.map((p) => (
         p.slug === post.slug ? { ...p, public: nextPublic ? undefined : false } : p
       )));
-      setNotice(`"${post.title}" is now ${nextPublic ? 'public' : 'private'} — live after the redeploy (~1–2 min).`);
+      setNotice(nextPublic
+        ? `"${post.title}" is now public — moved to the public repo, live after the redeploy (~1–2 min).`
+        : `"${post.title}" is now private — moved to the private repo; the public site forgets it after the redeploy (~1–2 min).`);
     } catch (err) {
       if (!handleAuthError(err)) {
         setLoadError(`Visibility change failed: ${(err.body && err.body.error) || err.message}`);

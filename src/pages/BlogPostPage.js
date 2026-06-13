@@ -1,22 +1,40 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { allPosts } from '../data/blogPosts';
+import { getPrivatePosts, hasAdminSession } from './admin/api';
 
 const BlogPostPage = () => {
   const { slug } = useParams();
-  // allPosts so unlisted (public: false) posts still render by direct URL.
-  const post = allPosts.find((p) => p.slug === slug);
+  const bundled = allPosts.find((p) => p.slug === slug);
+
+  // Private posts never ship in the bundle; with an admin session they're
+  // fetched at runtime. null = resolved-and-absent, so visitors without a
+  // session fall straight through to "Post not found".
+  const [privatePost, setPrivatePost] = useState(bundled || !hasAdminSession() ? null : undefined);
+  useEffect(() => {
+    if (bundled || !hasAdminSession()) return undefined;
+    let active = true;
+    getPrivatePosts()
+      .then((data) => active && setPrivatePost(data.posts.find((p) => p.slug === slug) || null))
+      .catch(() => active && setPrivatePost(null));
+    return () => { active = false; };
+  }, [slug, bundled]);
+
+  const post = bundled || privatePost;
+  const loading = !bundled && privatePost === undefined;
 
   useEffect(() => {
     if (post) {
       document.title = `${post.title} — Avigya Paudel`;
-    } else {
+    } else if (!loading) {
       document.title = 'Post Not Found — Avigya Paudel';
     }
     return () => {
       document.title = 'Avigya Paudel';
     };
-  }, [post]);
+  }, [post, loading]);
+
+  if (loading) return null;
 
   if (!post) {
     return (
@@ -43,6 +61,12 @@ const BlogPostPage = () => {
             >
               {post.category}
             </Link>
+          </>
+        )}
+        {post.public === false && (
+          <>
+            {' · '}
+            <span className="blog-post-private">Private</span>
           </>
         )}
       </header>

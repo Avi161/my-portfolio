@@ -23,10 +23,18 @@ function issueToken() {
   return { token: `${expiresAt}.${signature}`, expiresAt };
 }
 
-function verifyAuth(req) {
+// allowCookie is for read-only endpoints only (private posts, images): the
+// browser sends the SameSite=Lax cookie on same-site requests, which lets
+// <img> tags and non-admin tabs authenticate. Mutations must keep requiring
+// the Bearer header so a cross-site request can never carry credentials.
+function verifyAuth(req, { allowCookie = false } = {}) {
   const secret = process.env.ADMIN_PASSWORD;
   const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+  let token = header.startsWith('Bearer ') ? header.slice(7) : '';
+  if (!token && allowCookie) {
+    const match = (req.headers.cookie || '').match(/(?:^|;\s*)admin_token=([^;]+)/);
+    if (match) token = decodeURIComponent(match[1]);
+  }
   const [expiresAt, signature] = token.split('.');
   if (!secret || !expiresAt || !signature) return false;
   const expected = hmac(expiresAt, secret);
