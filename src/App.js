@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import BlogsListPage from './pages/BlogsListPage';
 import BlogPostPage from './pages/BlogPostPage';
 import ProjectsPage from './pages/ProjectsPage';
+import ContactPage from './pages/ContactPage';
 import './App.css';
 
 // Lazy so the editor (TipTap) never loads for regular visitors.
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: '/blog', element: <BlogsListPage /> },
       { path: '/blog/:slug', element: <BlogPostPage /> },
       { path: '/projects', element: <ProjectsPage /> },
+      { path: '/contact', element: <ContactPage /> },
       {
         path: '/admin',
         element: (

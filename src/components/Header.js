@@ -9,7 +9,7 @@ const Header = () => (
         <Link to="/blog">Blog</Link>
         <Link to="/projects">Projects</Link>
         <a href="https://github.com/Avi161" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="mailto:paudela@union.edu">Contact</a>
+        <Link to="/contact">Contact</Link>
       </nav>
     </div>
   </header>

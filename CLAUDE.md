@@ -3,6 +3,13 @@
 Personal portfolio site (Create React App, react-router `createBrowserRouter`).
 Deployed on **Vercel (Hobby plan)**. Domains: `avigya.vercel.app`, `www.avigyapaudel.com`.
 
+## Contact form (/contact)
+- Route `/contact` → `src/pages/ContactPage.js` (name + email + message card; styles under `.contact-*` in `App.css`). Header/footer "Contact" used to be a `mailto:`; header now links to `/contact`.
+- Backend `api/contact.js` (Vercel serverless, zero npm deps — uses global `fetch`) POSTs to the **Resend** REST API (`https://api.resend.com/emails`), `from` `onboarding@resend.dev`, `to` the owner inbox, `reply_to` the visitor's email — so replying in the inbox reaches the sender. HTML-escapes the message body.
+- Required env var: `RESEND_API_KEY` (Vercel → Settings → Environment Variables). Optional overrides: `CONTACT_TO` (default `avigyapaudel045@gmail.com`), `CONTACT_FROM`.
+- Spam: hidden honeypot field `company` — if filled, the handler returns 200 and sends nothing. No CAPTCHA key needed.
+- `npm start` can't serve `/api` (CRA) — test the endpoint with `node .scratch/test-contact.js` (mocks `fetch`, no live key) or `vercel dev`.
+
 ## Blog posts
 - **Public** posts live in `src/data/posts.json` as an array of `{ slug, title, date, summary, content }`, newest first. `src/data/blogPosts.js` is a thin shim that imports it (sorted by date desc) — page imports go through the shim.
 - **Private** posts live in a separate PRIVATE repo (`Avi161/my-portfolio-private`, override via `PRIVATE_REPO` env): `posts.json` at the repo root, images under `images/blog/<slug>/`. They never enter the public repo or the JS bundle; `/blog` and `/blog/:slug` fetch them at runtime (`GET /api/posts?private=1`) only when an admin session cookie exists, and their images are served by `api/image.js` (`/api/image?p=<slug>/<file>`, session-cookie auth). Logged-out visitors get the normal 404. Slugs are unique across BOTH repos. Toggling visibility moves the post + image binaries between repos server-side (two commits, target repo first) and rewrites img srcs between `/images/blog/...` and `/api/image?p=...`. Private publishes are live instantly (no Vercel deploy involved); public ones still redeploy.

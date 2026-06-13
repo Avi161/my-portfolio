@@ -98,7 +98,7 @@ a:hover {
 .hero-cover {
   width: 100vw;
   margin-left: calc(-50vw + 50%);
-  height: 420px;
+  height: 600px;
   background-size: cover;
   background-position: center;
   background-color: #f0f0f0;
@@ -725,4 +725,137 @@ a:hover {
 @media (max-width: 600px) {
   .blog-post-content .rk-lbl { font-size: 0.58rem; }
   .blog-post-content .risk-board { min-height: 320px; }
+}
+
+/* ============================================================
+   Contact page
+   ============================================================ */
+.contact-page {
+  max-width: 540px;
+}
+
+.contact-heading {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.contact-lead {
+  color: #555;
+  margin-bottom: 28px;
+}
+
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 28px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-field label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #555;
+}
+
+.contact-field input,
+.contact-field textarea {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.95rem;
+  color: #222;
+  background: #fafafa;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  padding: 10px 12px;
+  width: 100%;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.contact-field textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+.contact-field input::placeholder,
+.contact-field textarea::placeholder {
+  color: #aaa;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+  outline: none;
+  background: #fff;
+  border-color: #4183c4;
+}
+
+/* Honeypot — visually hidden, kept in the layout for bots. */
+.contact-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.contact-submit {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #fff;
+  background: #4183c4;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.contact-submit:hover {
+  background: #356aa0;
+}
+
+.contact-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.contact-status {
+  font-size: 0.88rem;
+}
+
+.contact-status.is-ok {
+  color: #2e7d4f;
+}
+
+.contact-status.is-error {
+  color: #b3261e;
+}
+
+@media (max-width: 600px) {
+  .contact-card {
+    padding: 22px 18px;
+  }
 }
