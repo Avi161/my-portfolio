@@ -3,9 +3,14 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { publicPosts } from '../data/blogPosts';
 import { getPrivatePosts, hasAdminSession } from './admin/api';
 
+// Lives off to the side, hidden from the default "Writing" list and its tabs;
+// only shown when its side link is clicked.
+const MISC = 'Miscellaneous';
+
 const BlogsListPage = () => {
   const [searchParams] = useSearchParams();
   const active = searchParams.get('section');
+  const inMisc = active === MISC;
 
   // With an admin session, private posts (fetched at runtime — they're never
   // in the bundle) appear in the list too, marked Private. Visitors without a
@@ -26,16 +31,22 @@ const BlogsListPage = () => {
   );
   const sections = useMemo(
     () => [...new Set(posts.map((p) => p.category).filter(Boolean))]
+      .filter((c) => c !== MISC)
       .sort((a, b) => a.localeCompare(b)),
     [posts]
   );
-  const shown = active ? posts.filter((p) => p.category === active) : posts;
+  const hasMisc = useMemo(() => posts.some((p) => p.category === MISC), [posts]);
+  // Default ("All") and the Writing tabs never include Miscellaneous; you only
+  // reach it through the side link.
+  const shown = active
+    ? posts.filter((p) => p.category === active)
+    : posts.filter((p) => p.category !== MISC);
 
   return (
     <div className="blog-list-page">
       <section className="blog-list">
-        <h2>Writing</h2>
-        {sections.length > 0 && (
+        <h2>{inMisc ? MISC : 'Writing'}</h2>
+        {(sections.length > 0 || hasMisc) && (
           <nav className="blog-tabs">
             <Link to="/blog" className={!active ? 'is-active' : ''}>All</Link>
             {sections.map((s) => (
@@ -47,6 +58,14 @@ const BlogsListPage = () => {
                 {s}
               </Link>
             ))}
+            {hasMisc && (
+              <Link
+                to={`/blog?section=${encodeURIComponent(MISC)}`}
+                className={`blog-tab-aside${inMisc ? ' is-active' : ''}`}
+              >
+                {MISC}
+              </Link>
+            )}
           </nav>
         )}
         {shown.length === 0 && <p className="blog-empty">No posts in this section yet.</p>}

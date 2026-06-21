@@ -162,6 +162,16 @@ a:hover {
   color: #fff;
 }
 
+/* Pushed off to the side, set apart from the Writing tabs. */
+.blog-tabs a.blog-tab-aside {
+  margin-left: auto;
+  border-style: dashed;
+}
+
+.blog-tabs a.blog-tab-aside:not(.is-active) {
+  color: #999;
+}
+
 .blog-empty {
   color: #999;
   font-size: 0.95rem;
