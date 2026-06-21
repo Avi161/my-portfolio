@@ -303,38 +303,6 @@ a:hover {
   font-style: italic;
 }
 
-.blog-post-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 24px 0;
-  font-size: 0.97rem;
-}
-
-.blog-post-content th,
-.blog-post-content td {
-  border: 1px solid #eee;
-  padding: 10px 12px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.blog-post-content thead th {
-  background: #fbfbfb;
-  font-weight: 600;
-}
-
-.blog-post-content .habit-tracker td:nth-child(2) {
-  white-space: nowrap;
-  color: #666;
-}
-
-.blog-post-content .habit-tracker td:nth-child(3) {
-  width: 64px;
-  text-align: center;
-  color: #2e7d32;
-  font-weight: 700;
-}
-
 .blog-post-content code {
   font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 0.9em;
