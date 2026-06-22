@@ -303,6 +303,54 @@ a:hover {
   font-style: italic;
 }
 
+.blog-post-content .habit-tracker {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 0.95rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+.blog-post-content .habit-tracker th,
+.blog-post-content .habit-tracker td {
+  padding: 11px 14px;
+  border: 1px solid #ececec;
+  text-align: left;
+  vertical-align: top;
+}
+
+.blog-post-content .habit-tracker thead th {
+  background: #fafafa;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888;
+}
+
+.blog-post-content .habit-tracker td:first-child {
+  font-weight: 600;
+  color: #222;
+  white-space: nowrap;
+}
+
+.blog-post-content .habit-tracker td:nth-child(2) {
+  color: #888;
+  white-space: nowrap;
+}
+
+.blog-post-content .habit-tracker td:nth-child(3) {
+  width: 56px;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.blog-post-content .habit-tracker tbody tr:hover td {
+  background: #fcfcfc;
+}
+
 .blog-post-content code {
   font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
   font-size: 0.9em;
