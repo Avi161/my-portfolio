@@ -1,13 +1,5 @@
 [
   {
-    "slug": "wall-staring-challenge",
-    "title": "The Wall Staring Challenge",
-    "date": "2026-06-21",
-    "summary": "Daily log of wall staring.",
-    "content": "<h2>The week</h2><p>Mon Jun 22 – Sun Jun 28, 2026. One day at a time.</p><table class=\"habit-tracker\"><thead><tr><th>Day</th><th>Date</th><th>Done</th><th>Notes</th></tr></thead><tbody><tr><td>Monday</td><td>Jun 22</td><td></td><td></td></tr><tr><td>Tuesday</td><td>Jun 23</td><td></td><td></td></tr><tr><td>Wednesday</td><td>Jun 24</td><td></td><td></td></tr><tr><td>Thursday</td><td>Jun 25</td><td></td><td></td></tr><tr><td>Friday</td><td>Jun 26</td><td></td><td></td></tr><tr><td>Saturday</td><td>Jun 27</td><td></td><td></td></tr><tr><td>Sunday</td><td>Jun 28</td><td></td><td></td></tr></tbody></table>",
-    "category": "Miscellaneous"
-  },
-  {
     "slug": "discipline",
     "title": "Discipline",
     "date": "2026-06-12",
