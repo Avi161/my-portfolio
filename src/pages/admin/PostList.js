@@ -59,7 +59,7 @@ export default function PostList({ posts, drafts, loading, error, notice, toggli
             key={p.slug}
             title={p.title}
             badge={p.public === false && <span className="admin-badge admin-badge-private">Private</span>}
-            meta={`${p.date} · /blog/${p.slug}${p.category ? ` · ${p.category}` : ''}`}
+            meta={`${p.date} · /blog/${p.slug}${p.category ? ` · ${p.category}` : ''}${p.tags && p.tags.length ? ` · ${p.tags.map((t) => `#${t}`).join(' ')}` : ''}${p.listed === false && p.public !== false ? ' · hidden from main' : ''}`}
             onEdit={() => onEditPost(p)}
             onDelete={() => onDeletePost(p.slug)}
             deleteLabel="Delete"

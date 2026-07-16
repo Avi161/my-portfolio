@@ -486,3 +486,83 @@
 .admin-status-info {
   color: #666;
 }
+
+/* ---- Section picker (cascading selects) ---- */
+
+.admin-section-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.admin-section-picker select,
+.admin-section-picker input {
+  font-size: 0.95rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  color: #333;
+  background: #fff;
+}
+
+.admin-add-sub-btn {
+  padding: 0.4rem 0.2rem;
+  font-size: 0.85rem;
+}
+
+/* ---- Tags input (chips) ---- */
+
+.admin-tags-label {
+  flex: 1;
+  min-width: 14rem;
+}
+
+.admin-tags-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  background: #fff;
+}
+
+.admin-tags-input input {
+  border: none;
+  outline: none;
+  padding: 0.2rem;
+  min-width: 7rem;
+  flex: 1;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #333;
+}
+
+.admin-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #eef4fb;
+  border: 1px solid #d4e3f4;
+  color: #33597e;
+  border-radius: 999px;
+  padding: 0.1rem 0.3rem 0.1rem 0.6rem;
+  font-size: 0.8rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+.admin-tag-chip button {
+  background: none;
+  border: none;
+  color: #7d9cbd;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0 0.15rem;
+}
+
+.admin-tag-chip button:hover {
+  color: #c0392b;
+}

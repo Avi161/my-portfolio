@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { generateHTML, generateJSON } from '@tiptap/core';
 import TipTapEditor, { EDITOR_EXTENSIONS } from './TipTapEditor';
+import SectionPicker from './SectionPicker';
+import TagsInput from './TagsInput';
 import { publishPost, deletePost, uploadImageBlob } from './api';
 import { saveDraft, deleteDraft, newDraftId } from './drafts';
 import { extractImages, fileToDataUrl } from './images';
@@ -58,7 +60,7 @@ function markdownWouldDropImageSizes(html) {
   return /<img[^>]*\s(width|height|data-align)=/.test(html || '');
 }
 
-export default function PostEditor({ initial, draftId, onBack, onSaved, categories = [] }) {
+export default function PostEditor({ initial, draftId, onBack, onSaved, categories = [], allTags = [] }) {
   const isPublished = Boolean(initial && initial.published);
   const unsafeForRichMode = useMemo(
     () => richModeWouldAlter((initial && initial.content) || ''),
@@ -72,9 +74,13 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
   const [date, setDate] = useState((initial && initial.date) || localToday());
   const [summary, setSummary] = useState((initial && initial.summary) || '');
   const [category, setCategory] = useState((initial && initial.category) || '');
+  const [tags, setTags] = useState((initial && initial.tags) || []);
   // `public` is a reserved identifier; the post field stays `public`, the state
   // is isPublic. Missing field means public (legacy posts have no flag).
   const [isPublic, setIsPublic] = useState(!(initial && initial.public === false));
+  // listed: false = hidden from the main /blog list, shown only under its
+  // section tab. Missing field means listed.
+  const [listed, setListed] = useState(!(initial && initial.listed === false));
 
   // Pasted/inserted images live here as data URLs; the editable content and
   // markdown carry only short cimg://<id> placeholders, so the source stays
@@ -120,7 +126,7 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
   );
 
   const stateRef = useRef(null);
-  stateRef.current = { title, slug, date, summary, content, previousSlug, mode, markdownText, category, public: isPublic };
+  stateRef.current = { title, slug, date, summary, content, previousSlug, mode, markdownText, category, tags, listed, public: isPublic };
 
   // The post body as HTML regardless of which mode it was written in.
   function currentHtml() {
@@ -165,7 +171,7 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
     if (!title && !content && !markdownText) return undefined;
     const timer = setTimeout(persistDraft, 2000);
     return () => clearTimeout(timer);
-  }, [title, slug, date, summary, content, markdownText, category, isPublic, persistDraft]);
+  }, [title, slug, date, summary, content, markdownText, category, tags, listed, isPublic, persistDraft]);
 
   function handleTitleChange(value) {
     setTitle(value);
@@ -261,6 +267,12 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
       return setStatus({ kind: 'error', text: `Markdown conversion failed: ${err.message}` });
     }
     if (!tokenHtml.trim()) return setStatus({ kind: 'error', text: 'Post body is empty.' });
+    if (s.public && !s.listed && !s.category.trim()) {
+      return setStatus({
+        kind: 'error',
+        text: 'A post hidden from the main page needs a section — otherwise nothing on /blog links to it.',
+      });
+    }
     if (hasUnresolvedImages(tokenHtml, imageStore.current)) {
       return setStatus({
         kind: 'error',
@@ -304,6 +316,8 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
           summary: s.summary.trim(),
           content: html,
           category: s.category.trim(),
+          tags: s.tags,
+          listed: s.listed,
           public: s.public,
         },
         previousSlug: s.previousSlug,
@@ -444,20 +458,6 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </label>
         <label>
-          Section
-          <input
-            type="text"
-            list="admin-section-options"
-            maxLength={40}
-            placeholder="e.g. AI Safety"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          />
-          <datalist id="admin-section-options">
-            {categories.map((c) => <option key={c} value={c} />)}
-          </datalist>
-        </label>
-        <label>
           Visibility
           <span className="admin-mode-toggle admin-visibility-toggle">
             <button
@@ -471,6 +471,34 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
               onClick={() => setIsPublic(false)}
             >Private</button>
           </span>
+        </label>
+        {isPublic && (
+          <label>
+            Main page
+            <span className="admin-mode-toggle admin-visibility-toggle">
+              <button
+                type="button"
+                className={listed ? 'is-active' : ''}
+                onClick={() => setListed(true)}
+              >Shown</button>
+              <button
+                type="button"
+                className={!listed ? 'is-active' : ''}
+                onClick={() => setListed(false)}
+              >Hidden</button>
+            </span>
+          </label>
+        )}
+      </div>
+
+      <div className="admin-meta-row">
+        <label>
+          Section
+          <SectionPicker value={category} onChange={setCategory} categories={categories} />
+        </label>
+        <label className="admin-tags-label">
+          Tags
+          <TagsInput tags={tags} onChange={setTags} suggestions={allTags} />
         </label>
       </div>
 
@@ -530,7 +558,13 @@ export default function PostEditor({ initial, draftId, onBack, onSaved, categori
       {!isPublic && (
         <p className="admin-muted admin-visibility-hint">
           This post will be private — stored in your private repo (never the public one)
-          and visible on the site only while you're logged in to /admin.
+          and readable on the site only after unlocking the Private tab (or logging in to /admin).
+        </p>
+      )}
+      {isPublic && !listed && (
+        <p className="admin-muted admin-visibility-hint">
+          Hidden from the main /blog list — it appears only under its section tab
+          {category.trim() ? ` (${category.trim()})` : ''}.
         </p>
       )}
 

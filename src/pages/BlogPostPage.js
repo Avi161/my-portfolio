@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { allPosts } from '../data/blogPosts';
 import { getPrivatePosts, hasAdminSession } from './admin/api';
+import { splitPath } from '../lib/sections';
 
 const BlogPostPage = () => {
   const { slug } = useParams();
@@ -55,12 +56,23 @@ const BlogPostPage = () => {
         {post.category && (
           <>
             {' · '}
-            <Link
-              className="blog-post-category"
-              to={`/blog?section=${encodeURIComponent(post.category)}`}
-            >
-              {post.category}
-            </Link>
+            {splitPath(post.category).map((seg, i, arr) => {
+              // Private posts live under the Private tab, so their section
+              // links carry the virtual "Private/" prefix.
+              const base = post.public === false ? ['Private'] : [];
+              const path = [...base, ...arr.slice(0, i + 1)].join('/');
+              return (
+                <React.Fragment key={path}>
+                  {i > 0 && <span className="blog-post-category-sep"> / </span>}
+                  <Link
+                    className="blog-post-category"
+                    to={`/blog?section=${encodeURIComponent(path)}`}
+                  >
+                    {seg}
+                  </Link>
+                </React.Fragment>
+              );
+            })}
           </>
         )}
         {post.public === false && (
@@ -68,6 +80,15 @@ const BlogPostPage = () => {
             {' · '}
             <span className="blog-post-private">Private</span>
           </>
+        )}
+        {post.tags && post.tags.length > 0 && (
+          <div className="blog-post-tags">
+            {post.tags.map((t) => (
+              <Link key={t} to={`/blog?tag=${encodeURIComponent(t)}`} className="blog-entry-tag">
+                #{t}
+              </Link>
+            ))}
+          </div>
         )}
       </header>
       <div

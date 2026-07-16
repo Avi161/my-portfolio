@@ -83,8 +83,14 @@ function validatePost(post, images, store) {
   if (post.category !== undefined && typeof post.category !== 'string') {
     return { error: 'invalid-category', field: 'category' };
   }
-  if (typeof post.category === 'string' && post.category.trim().length > 40) {
-    return { error: 'invalid-category', field: 'category' };
+  if (post.listed !== undefined && typeof post.listed !== 'boolean') {
+    return { error: 'invalid-listed', field: 'listed' };
+  }
+  if (
+    post.tags !== undefined
+    && (!Array.isArray(post.tags) || post.tags.some((t) => typeof t !== 'string'))
+  ) {
+    return { error: 'invalid-tags', field: 'tags' };
   }
   for (const image of images) {
     // Each image carries either a pre-uploaded blob sha (normal path) or inline
@@ -158,11 +164,29 @@ async function savePost(req, res) {
   ]);
   const listFor = (store) => (store.key === 'public' ? publicPosts : privatePosts);
 
+  // Sections are slash-separated paths ("Journal/2026/July"); each segment is
+  // trimmed and whitespace-collapsed, empty segments dropped. The top-level
+  // name "Private" is reserved for the locked tab on /blog.
+  const category = typeof post.category === 'string'
+    ? post.category.split('/').map((s) => s.trim().replace(/\s+/g, ' ')).filter(Boolean).join('/')
+    : '';
+  if (category.length > 80 || category.split('/').some((s) => s.length > 40)) {
+    return res.status(400).json({ error: 'invalid-category', field: 'category' });
+  }
+  if (/^private$/i.test(category.split('/')[0] || '')) {
+    return res.status(400).json({ error: 'reserved-category', field: 'category' });
+  }
+  const tags = [];
+  for (const raw of Array.isArray(post.tags) ? post.tags : []) {
+    const tag = raw.trim().replace(/\s+/g, ' ');
+    if (tag && !tags.some((t) => t.toLowerCase() === tag.toLowerCase())) tags.push(tag);
+  }
+  if (tags.length > 12 || tags.some((t) => t.length > 30)) {
+    return res.status(400).json({ error: 'invalid-tags', field: 'tags' });
+  }
+
   // Optional fields are written only when meaningful so legacy posts (and
   // posts toggled back to public/uncategorized) keep the minimal 5-field shape.
-  const category = typeof post.category === 'string'
-    ? post.category.trim().replace(/\s+/g, ' ')
-    : '';
   const clean = {
     slug: post.slug,
     title: post.title,
@@ -170,6 +194,9 @@ async function savePost(req, res) {
     summary: post.summary,
     content: post.content,
     ...(category ? { category } : {}),
+    ...(tags.length ? { tags } : {}),
+    // listed: false = kept off the main /blog list, reachable via its section tab.
+    ...(post.listed === false ? { listed: false } : {}),
     ...(post.public === false ? { public: false } : {}),
   };
 

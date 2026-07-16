@@ -105,6 +105,7 @@ export default function AdminPage() {
           onBack={() => setView('list')}
           onSaved={loadPosts}
           categories={[...new Set((posts || []).map((p) => p.category).filter(Boolean))].sort()}
+          allTags={[...new Set((posts || []).flatMap((p) => p.tags || []))].sort()}
         />
       </div>
     );
