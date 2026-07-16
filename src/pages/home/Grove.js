@@ -39,8 +39,8 @@ export default function Grove() {
           <h1 className="hv10-name">Avigya Paudel</h1>
           <p className="hv10-tag">CS &amp; Math | AI Safety</p>
           <div className="hv10-cta">
-            <Link to="/blog" className="hv10-btn">Blog</Link>
-            <Link to="/contact" className="hv10-btn hv10-btn-ghost">Contact</Link>
+            <Link to="/blog" className="hv-btn">Blog</Link>
+            <Link to="/contact" className="hv-btn hv-btn-ghost">Contact</Link>
           </div>
         </div>
       </section>

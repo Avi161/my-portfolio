@@ -58,6 +58,36 @@
   to { opacity: 1; transform: none; }
 }
 
+/* ---- Shared: hero CTA buttons (identical on every design) ---- */
+.hv-btn {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: #fff;
+  color: #0b1526;
+  font-family: var(--hv-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.hv-btn:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.hv-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.hv-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+}
+
 /* ============================================================
    Design 1 — Cinematic (night-sky full bleed, Ken Burns, ticker)
    ============================================================ */
@@ -173,32 +203,9 @@
   animation: hv-rise 1s ease 0.62s both;
 }
 
-.hvc-btn {
-  display: inline-block;
-  padding: 12px 26px;
-  border-radius: 999px;
-  background: #fff;
-  color: #0b1526;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-}
 
-.hvc-btn:hover {
-  text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-}
 
-.hvc-btn-ghost {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  color: #fff;
-}
 
-.hvc-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
 
 .hvc-bio {
   max-width: 620px;
@@ -324,28 +331,12 @@
 
 .hv6-cta {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
   animation: hv-rise 1s ease 0.6s both;
 }
 
-.hv6-cta a {
-  font-family: var(--hv-sans);
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #f3efdd;
-  border: 1px solid rgba(243, 239, 221, 0.4);
-  border-radius: 999px;
-  padding: 10px 22px;
-  backdrop-filter: blur(3px);
-  transition: border-color 0.25s ease, background 0.25s ease;
-}
 
-.hv6-cta a:hover {
-  text-decoration: none;
-  border-color: rgba(255, 233, 163, 0.9);
-  background: rgba(255, 233, 163, 0.14);
-}
 
 .hv6-bio {
   max-width: 620px;
@@ -496,24 +487,12 @@
 
 .hv8-cta {
   display: flex;
-  gap: 22px;
+  gap: 14px;
+  flex-wrap: wrap;
   animation: hv-rise 1s ease 0.6s both;
 }
 
-.hv8-cta a {
-  font-family: var(--hv-sans);
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #fdf3e4;
-  border-bottom: 2px solid #d9804f;
-  padding-bottom: 1px;
-  transition: color 0.2s ease;
-}
 
-.hv8-cta a:hover {
-  text-decoration: none;
-  color: #ffb26e;
-}
 
 .hv8-bio {
   max-width: 620px;
@@ -610,24 +589,12 @@
 
 .hv9-cta {
   display: flex;
-  gap: 22px;
+  gap: 14px;
+  flex-wrap: wrap;
   animation: hv-rise 1s ease 0.6s both;
 }
 
-.hv9-cta a {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #fff;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.7);
-  padding-bottom: 1px;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
 
-.hv9-cta a:hover {
-  text-decoration: none;
-  color: #b7e4c7;
-  border-color: #b7e4c7;
-}
 
 .hv9-bio {
   max-width: 620px;
@@ -721,32 +688,9 @@
   animation: hv-rise 1s ease 0.6s both;
 }
 
-.hv10-btn {
-  display: inline-block;
-  padding: 12px 26px;
-  border-radius: 999px;
-  background: #fff;
-  color: #1c1330;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
 
-.hv10-btn:hover {
-  text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-}
 
-.hv10-btn-ghost {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  color: #fff;
-}
 
-.hv10-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
 
 .hv10-bio {
   max-width: 620px;

@@ -43,8 +43,8 @@ export default function Cinematic() {
           <h1 className="hvc-headline">Avigya Paudel</h1>
           <p className="hvc-sub">CS &amp; Math | AI Safety</p>
           <div className="hvc-cta">
-            <Link to="/blog" className="hvc-btn">Blog</Link>
-            <Link to="/contact" className="hvc-btn hvc-btn-ghost">Contact</Link>
+            <Link to="/blog" className="hv-btn">Blog</Link>
+            <Link to="/contact" className="hv-btn hv-btn-ghost">Contact</Link>
           </div>
         </div>
       </section>

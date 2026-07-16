@@ -45,8 +45,8 @@ export default function Fireflies() {
           <h1 className="hv6-name">Avigya Paudel</h1>
           <p className="hv6-tag">CS &amp; Math | AI Safety</p>
           <div className="hv6-cta">
-            <Link to="/blog">Blog</Link>
-            <Link to="/contact">Contact</Link>
+            <Link to="/blog" className="hv-btn">Blog</Link>
+            <Link to="/contact" className="hv-btn hv-btn-ghost">Contact</Link>
           </div>
         </div>
       </section>
