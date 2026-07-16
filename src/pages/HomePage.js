@@ -1,56 +1,52 @@
-import React from 'react';
-import profileImage from '../components/AviPic.jpg';
+import React, { useState } from 'react';
+import Cinematic from './home/Cinematic';
+import Fireflies from './home/Fireflies';
+import Leaves from './home/Leaves';
+import Hills from './home/Hills';
+import Grove from './home/Grove';
+import './home/home.css';
 
-const HomePage = () => {
+// Animated nature hero designs, cycled by the minimal ⇆ toggle at the top
+// left (also direct-linkable via ?hv=<key>). Mountain is always the default.
+const VARIANTS = [
+  { key: '1', label: 'Mountain', component: Cinematic },
+  { key: '2', label: 'Forest', component: Fireflies },
+  { key: '3', label: 'Autumn', component: Leaves },
+  { key: '4', label: 'Highlands', component: Hills },
+  { key: '5', label: 'Alpenglow', component: Grove },
+];
+
+function isValid(key) {
+  return VARIANTS.some((v) => v.key === key);
+}
+
+// Always open on Mountain; ?hv=<key> still allows direct-linking a design.
+function initialChoice() {
+  const forced = new URLSearchParams(window.location.search).get('hv');
+  return forced && isValid(forced) ? forced : '1';
+}
+
+export default function HomePage() {
+  const [choice, setChoice] = useState(initialChoice);
+  const index = Math.max(0, VARIANTS.findIndex((v) => v.key === choice));
+  const active = VARIANTS[index];
+  const ActiveComponent = active.component;
+
+  function cycle() {
+    setChoice(VARIANTS[(index + 1) % VARIANTS.length].key);
+  }
+
   return (
     <>
-      {/* Hero Cover Section */}
-      <div
-        className="hero-cover"
-        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/background.jpg)` }}
+      <ActiveComponent />
+      <button
+        type="button"
+        className="home-cycle-toggle"
+        onClick={cycle}
+        aria-label="Switch homepage design"
       >
-      </div>
-
-      {/* Your existing content below */}
-      <div className="home-page">
-        <img src={profileImage} alt="Avigya Paudel" className="profile-image" />
-        <section className="intro">
-          <p>
-            I'm <strong>Avi</strong>, a CS and Math major at{' '}
-            <a href="https://www.union.edu/" target="_blank" rel="noopener noreferrer">
-              Union College
-            </a>
-            . I'm passionate about AI Safety which is a field dedicated to ensuring current and future AI systems do not cause unintended harm.
-          </p>
-          <p>
-            I'm currently a researcher at{' '}
-            <a href="https://math-ai.caltech.edu/" target="_blank" rel="noopener noreferrer">
-              Caltech's Math+AI Lab
-            </a>
-            , working under{' '}
-            <a href="https://gukov.caltech.edu/" target="_blank" rel="noopener noreferrer">
-              Dr. Sergei Gukov
-            </a>
-            . I am applying an AlphaZero-inspired value network and Monte Carlo Tree Search to find new solutions to the Andrews-Curtis Conjecture, and ultimately understand how AI can be used to solve research-level mathematics problems.
-          </p>
-          <p>
-            Previously, I was a research fellow at{' '}
-            <a href="https://sparai.org/" target="_blank" rel="noopener noreferrer">
-              SPAR
-            </a>
-            , where I worked on understanding how LLMs reason across different timescales, specifically identifying when models shift into strategic, long-term planning modes. You can read more about the project{' '}
-            <a href="https://www.justinshenk.com/projects/spar-research" target="_blank" rel="noopener noreferrer">
-              here
-            </a>{' '}
-            and view the{' '}
-            <a href="https://arxiv.org/pdf/2606.05194" target="_blank" rel="noopener noreferrer">
-              paper
-            </a>.
-          </p>
-        </section>
-      </div>
+        ⇆
+      </button>
     </>
   );
-};
-
-export default HomePage;
+}

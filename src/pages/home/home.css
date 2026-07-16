@@ -1,0 +1,888 @@
+/* ============================================================
+   Homepage nature hero designs (cycled by the ⇆ toggle)
+   Scopes: .hvc Mountain · .hv6 Forest · .hv8 Autumn ·
+           .hv9 Highlands · .hv10 Alpenglow · .home-cycle-toggle
+   ============================================================ */
+
+.hv {
+  --hv-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --hv-serif: Georgia, 'Times New Roman', serif;
+  --hv-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+/* Full-bleed breakout from the 700px column; first one sits flush under the header. */
+.hv-bleed {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.hv > .hv-bleed:first-child {
+  margin-top: -40px;
+}
+
+/* ---- Shared: scroll reveal ---- */
+.hv [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.hv [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Shared: bio column ---- */
+.hv-bio p {
+  margin-bottom: 14px;
+}
+
+.hv-bio a {
+  color: #4183c4;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  transition: background-size 0.3s ease;
+}
+
+.hv-bio a:hover {
+  text-decoration: none;
+  background-size: 100% 1px;
+}
+
+/* ---- Shared keyframes ---- */
+@keyframes hv-rise {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   Design 1 — Cinematic (night-sky full bleed, Ken Burns, ticker)
+   ============================================================ */
+
+.hvc-hero {
+  position: relative;
+  /* Fill exactly to the fold (header ≈ 92px) so the ticker is visible on load. */
+  height: calc(100vh - 92px);
+  min-height: 560px;
+  max-height: 880px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.hvc-backdrop {
+  position: absolute;
+  inset: -6%;
+  background-size: cover;
+  background-position: center 32%;
+  animation: hvc-kenburns 48s ease-in-out infinite alternate;
+}
+
+@keyframes hvc-kenburns {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.12) translate3d(-1.6%, 1.4%, 0); }
+}
+
+/* Shooting stars across the sky — three on staggered cycles. */
+.hvc-star {
+  position: absolute;
+  width: 130px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9));
+  opacity: 0;
+  z-index: 1;
+  animation: hvc-shoot 7s linear infinite;
+}
+
+.hvc-star-a {
+  top: 14%;
+  left: 66%;
+  animation-delay: 1s;
+}
+
+.hvc-star-b {
+  top: 7%;
+  left: 36%;
+  width: 95px;
+  animation-duration: 9s;
+  animation-delay: 4.5s;
+}
+
+.hvc-star-c {
+  top: 26%;
+  left: 86%;
+  width: 110px;
+  animation-duration: 8s;
+  animation-delay: 6.5s;
+}
+
+@keyframes hvc-shoot {
+  0% { opacity: 0; transform: rotate(32deg) translateX(0); }
+  3% { opacity: 0.9; }
+  9% { opacity: 0; transform: rotate(32deg) translateX(-320px); }
+  100% { opacity: 0; transform: rotate(32deg) translateX(-320px); }
+}
+
+.hvc-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(78deg, rgba(4, 10, 22, 0.85) 0%, rgba(4, 10, 22, 0.5) 42%, rgba(4, 10, 22, 0.12) 68%, rgba(4, 10, 22, 0.3) 100%),
+    linear-gradient(to top, rgba(4, 10, 22, 0.8) 0%, rgba(4, 10, 22, 0) 32%);
+}
+
+.hvc-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 48px 40px;
+  color: #f4f7fb;
+  font-family: var(--hv-sans);
+}
+
+.hvc-headline {
+  font-family: var(--hv-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  line-height: 1.06;
+  color: #fff;
+  text-shadow: 0 2px 34px rgba(0, 0, 0, 0.45);
+  margin-bottom: 22px;
+  animation: hv-rise 0.9s ease 0.25s both;
+}
+
+.hvc-sub {
+  max-width: 33rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: rgba(226, 236, 248, 0.85);
+  margin-bottom: 34px;
+  animation: hv-rise 1s ease 0.45s both;
+}
+
+.hvc-cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  animation: hv-rise 1s ease 0.62s both;
+}
+
+.hvc-btn {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: #fff;
+  color: #0b1526;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.hvc-btn:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.hvc-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.hvc-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hvc-bio {
+  max-width: 620px;
+  margin: 76px auto 24px;
+}
+
+/* ============================================================
+   Responsive & reduced motion
+   ============================================================ */
+
+@media (max-width: 600px) {
+  .hvc-inner,
+  .hv6-inner,
+  .hv8-inner,
+  .hv9-inner,
+  .hv10-inner {
+    padding: 0 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv *,
+  .hv *::before,
+  .hv *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hv [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   Designs 6–10 — real-photo nature heroes, each with living motion
+   ============================================================ */
+
+/* ---- 6 · Forest (misty pines + fireflies, slow push-in) ---- */
+
+.hv6-hero {
+  position: relative;
+  height: calc(100vh - 92px);
+  min-height: 540px;
+  max-height: 860px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.hv6-backdrop {
+  position: absolute;
+  inset: -7%;
+  background-size: cover;
+  background-position: center;
+  animation: hv6-push 40s ease-in-out infinite alternate;
+}
+
+@keyframes hv6-push {
+  from { transform: scale(1); }
+  to { transform: scale(1.14); }
+}
+
+.hv6-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(80deg, rgba(8, 16, 12, 0.68) 0%, rgba(8, 16, 12, 0.42) 48%, rgba(8, 16, 12, 0.2) 80%),
+    linear-gradient(to bottom, rgba(8, 16, 12, 0.15) 0%, rgba(8, 16, 12, 0.6) 100%);
+}
+
+.hv6-fly {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #e8d89a;
+  box-shadow: 0 0 6px 1px rgba(232, 216, 154, 0.3);
+  z-index: 1;
+  animation-name: hv6-wander, hv6-flicker;
+  animation-timing-function: ease-in-out, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  animation-direction: alternate, normal;
+}
+
+@keyframes hv6-wander {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(46px, -34px); }
+  66% { transform: translate(-24px, 28px); }
+  100% { transform: translate(30px, 44px); }
+}
+
+@keyframes hv6-flicker {
+  0%, 100% { opacity: 0; }
+  45% { opacity: 0.6; }
+  60% { opacity: 0.25; }
+}
+
+.hv6-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.hv6-name {
+  font-family: var(--hv-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6.5vw, 4.4rem);
+  color: #f3efdd;
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.5);
+  animation: hv-rise 0.9s ease 0.15s both;
+}
+
+.hv6-tag {
+  font-family: var(--hv-sans);
+  color: rgba(236, 232, 210, 0.85);
+  margin: 16px 0 34px;
+  animation: hv-rise 0.9s ease 0.4s both;
+}
+
+.hv6-cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  animation: hv-rise 1s ease 0.6s both;
+}
+
+.hv6-cta a {
+  font-family: var(--hv-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #f3efdd;
+  border: 1px solid rgba(243, 239, 221, 0.4);
+  border-radius: 999px;
+  padding: 10px 22px;
+  backdrop-filter: blur(3px);
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.hv6-cta a:hover {
+  text-decoration: none;
+  border-color: rgba(255, 233, 163, 0.9);
+  background: rgba(255, 233, 163, 0.14);
+}
+
+.hv6-bio {
+  max-width: 620px;
+  margin: 72px auto 24px;
+}
+
+/* ---- 7 · Coast (dawn shoreline, sideways breathe) ---- */
+
+.hv7-hero {
+  position: relative;
+  height: calc(100vh - 92px);
+  min-height: 540px;
+  max-height: 860px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hv7-backdrop {
+  position: absolute;
+  inset: -7%;
+  background-size: cover;
+  background-position: center 60%;
+  animation: hv7-breathe 34s ease-in-out infinite alternate;
+}
+
+@keyframes hv7-breathe {
+  from { transform: scale(1.08) translateX(-1.4%); }
+  to { transform: scale(1.08) translateX(1.4%); }
+}
+
+.hv7-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 250, 242, 0.32) 0%, rgba(255, 250, 242, 0.08) 55%, rgba(53, 84, 78, 0.18) 100%);
+}
+
+.hv7-inner {
+  position: relative;
+  z-index: 1;
+  padding: 0 24px;
+}
+
+.hv7-name {
+  font-family: var(--hv-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6.5vw, 4.4rem);
+  color: #24443f;
+  text-shadow: 0 1px 24px rgba(255, 255, 255, 0.55);
+  animation: hv-rise 0.9s ease 0.15s both;
+}
+
+.hv7-tag {
+  font-family: var(--hv-sans);
+  color: #3c5b54;
+  margin: 16px 0 30px;
+  animation: hv-rise 0.9s ease 0.4s both;
+}
+
+.hv7-cta {
+  display: flex;
+  gap: 22px;
+  justify-content: center;
+  animation: hv-rise 1s ease 0.6s both;
+}
+
+.hv7-cta a {
+  font-family: var(--hv-sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #24443f;
+  border-bottom: 2px solid #24443f;
+  padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.hv7-cta a:hover {
+  text-decoration: none;
+  color: #1f7a6d;
+  border-color: #1f7a6d;
+}
+
+.hv7-bio {
+  max-width: 620px;
+  margin: 72px auto 24px;
+}
+
+/* ---- 8 · Autumn (orange road, pull-back, leaves falling) ---- */
+
+.hv8-hero {
+  position: relative;
+  height: calc(100vh - 92px);
+  min-height: 540px;
+  max-height: 860px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.hv8-backdrop {
+  position: absolute;
+  inset: -7%;
+  background-size: cover;
+  background-position: center;
+  animation: hv8-pull 38s ease-in-out infinite alternate;
+}
+
+@keyframes hv8-pull {
+  from { transform: scale(1.14); }
+  to { transform: scale(1); }
+}
+
+.hv8-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(80deg, rgba(26, 12, 4, 0.62) 0%, rgba(26, 12, 4, 0.32) 48%, rgba(26, 12, 4, 0.15) 80%),
+    linear-gradient(to bottom, rgba(26, 12, 4, 0.1) 0%, rgba(26, 12, 4, 0.5) 100%);
+}
+
+.hv8-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.hv8-name {
+  font-family: var(--hv-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6.5vw, 4.4rem);
+  color: #fdf3e4;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+  animation: hv-rise 0.9s ease 0.15s both;
+}
+
+.hv8-tag {
+  font-family: var(--hv-serif);
+  font-style: italic;
+  color: rgba(250, 236, 214, 0.9);
+  margin: 16px 0 32px;
+  animation: hv-rise 0.9s ease 0.4s both;
+}
+
+.hv8-cta {
+  display: flex;
+  gap: 22px;
+  animation: hv-rise 1s ease 0.6s both;
+}
+
+.hv8-cta a {
+  font-family: var(--hv-sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fdf3e4;
+  border-bottom: 2px solid #d9804f;
+  padding-bottom: 1px;
+  transition: color 0.2s ease;
+}
+
+.hv8-cta a:hover {
+  text-decoration: none;
+  color: #ffb26e;
+}
+
+.hv8-bio {
+  max-width: 620px;
+  margin: 72px auto 24px;
+}
+
+/* ---- 9 · Highlands (green ridges, drift, sliding mist) ---- */
+
+.hv9-hero {
+  position: relative;
+  height: calc(100vh - 92px);
+  min-height: 540px;
+  max-height: 860px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+
+.hv9-backdrop {
+  position: absolute;
+  inset: -7%;
+  background-size: cover;
+  background-position: center 30%;
+  animation: hv9-drift 42s ease-in-out infinite alternate;
+}
+
+@keyframes hv9-drift {
+  from { transform: scale(1.1) translateX(1.6%); }
+  to { transform: scale(1.1) translateX(-1.6%); }
+}
+
+.hv9-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(80deg, rgba(8, 18, 12, 0.72) 0%, rgba(8, 18, 12, 0.38) 45%, rgba(8, 18, 12, 0.08) 75%),
+    linear-gradient(to top, rgba(8, 18, 12, 0.55) 0%, rgba(8, 18, 12, 0) 35%);
+}
+
+.hv9-mist {
+  position: absolute;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  filter: blur(30px);
+  z-index: 1;
+}
+
+.hv9-mist-a {
+  width: 60%;
+  left: 2%;
+  bottom: 26%;
+  animation: hv9-mist-drift 30s ease-in-out infinite alternate;
+}
+
+.hv9-mist-b {
+  width: 50%;
+  right: 0;
+  bottom: 12%;
+  animation: hv9-mist-drift 23s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes hv9-mist-drift {
+  from { transform: translateX(-6%); }
+  to { transform: translateX(7%); }
+}
+
+.hv9-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 48px;
+  color: #f1f6ef;
+  font-family: var(--hv-sans);
+}
+
+.hv9-name {
+  font-family: var(--hv-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  color: #fff;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
+  animation: hv-rise 0.9s ease 0.15s both;
+}
+
+.hv9-tag {
+  color: rgba(230, 240, 228, 0.85);
+  margin: 16px 0 32px;
+  animation: hv-rise 0.9s ease 0.4s both;
+}
+
+.hv9-cta {
+  display: flex;
+  gap: 22px;
+  animation: hv-rise 1s ease 0.6s both;
+}
+
+.hv9-cta a {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+  padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.hv9-cta a:hover {
+  text-decoration: none;
+  color: #b7e4c7;
+  border-color: #b7e4c7;
+}
+
+.hv9-bio {
+  max-width: 620px;
+  margin: 72px auto 24px;
+}
+
+/* ---- 10 · Alpenglow (peaks over cloud sea, rise-zoom, shooting stars) ---- */
+
+.hv10-hero {
+  position: relative;
+  height: calc(100vh - 92px);
+  min-height: 540px;
+  max-height: 860px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.hv10-backdrop {
+  position: absolute;
+  inset: -7%;
+  background-size: cover;
+  background-position: center 40%;
+  animation: hv10-rise 44s ease-in-out infinite alternate;
+}
+
+@keyframes hv10-rise {
+  from { transform: scale(1) translateY(0); }
+  to { transform: scale(1.12) translateY(-1.6%); }
+}
+
+.hv10-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(78deg, rgba(12, 8, 18, 0.72) 0%, rgba(12, 8, 18, 0.4) 45%, rgba(12, 8, 18, 0.1) 72%),
+    linear-gradient(to top, rgba(12, 8, 18, 0.55) 0%, rgba(12, 8, 18, 0) 35%);
+}
+
+.hv10-star {
+  position: absolute;
+  width: 110px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85));
+  opacity: 0;
+  z-index: 1;
+  animation: hv10-shoot 8s linear infinite;
+}
+
+.hv10-star-a { top: 12%; left: 60%; animation-delay: 2s; }
+.hv10-star-b { top: 20%; left: 28%; width: 90px; animation-duration: 10s; animation-delay: 6s; }
+
+@keyframes hv10-shoot {
+  0% { opacity: 0; transform: rotate(28deg) translateX(0); }
+  3% { opacity: 0.85; }
+  9% { opacity: 0; transform: rotate(28deg) translateX(-280px); }
+  100% { opacity: 0; transform: rotate(28deg) translateX(-280px); }
+}
+
+.hv10-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 48px;
+  color: #f6f2fa;
+  font-family: var(--hv-sans);
+}
+
+.hv10-name {
+  font-family: var(--hv-serif);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  color: #fff;
+  text-shadow: 0 2px 32px rgba(0, 0, 0, 0.55);
+  animation: hv-rise 0.9s ease 0.15s both;
+}
+
+.hv10-tag {
+  color: rgba(238, 230, 244, 0.85);
+  margin: 14px 0 30px;
+  animation: hv-rise 0.9s ease 0.4s both;
+}
+
+.hv10-cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  animation: hv-rise 1s ease 0.6s both;
+}
+
+.hv10-btn {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c1330;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hv10-btn:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.hv10-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.hv10-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hv10-bio {
+  max-width: 620px;
+  margin: 72px auto 24px;
+}
+
+/* ============================================================
+   Extra life layers
+   ============================================================ */
+
+/* Twinkling star specks (Mountain + Alpenglow skies). */
+.hv-twinkle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.8);
+  opacity: 0.15;
+  z-index: 1;
+  animation: hv-twinkle-pulse ease-in-out infinite alternate;
+}
+
+@keyframes hv-twinkle-pulse {
+  from { opacity: 0.12; transform: scale(0.7); }
+  to { opacity: 0.95; transform: scale(1.15); }
+}
+
+/* Low fog sliding between the Forest pines. */
+.hv6-mist {
+  position: absolute;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(210, 225, 215, 0.22);
+  filter: blur(34px);
+  z-index: 1;
+}
+
+.hv6-mist-a {
+  width: 65%;
+  left: 0;
+  bottom: 18%;
+  animation: hv6-mist-drift 34s ease-in-out infinite alternate;
+}
+
+.hv6-mist-b {
+  width: 55%;
+  right: -4%;
+  bottom: 36%;
+  animation: hv6-mist-drift 26s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes hv6-mist-drift {
+  from { transform: translateX(-5%); }
+  to { transform: translateX(6%); }
+}
+
+/* Distant birds gliding across the Highlands sky. */
+.hv9-birdtrack {
+  position: absolute;
+  left: -6%;
+  z-index: 1;
+  animation: hv9-fly linear infinite;
+}
+
+@keyframes hv9-fly {
+  from { transform: translateX(0); }
+  to { transform: translateX(118vw); }
+}
+
+.hv9-birdtrack svg {
+  display: block;
+  width: 22px;
+  height: auto;
+  animation: hv9-bob 3.4s ease-in-out infinite alternate;
+}
+
+@keyframes hv9-bob {
+  from { transform: translateY(0) scale(var(--hv9-scale, 1)); }
+  to { transform: translateY(7px) scale(var(--hv9-scale, 1)); }
+}
+
+/* Soft haze drifting over the Alpenglow cloud sea. */
+.hv10-haze {
+  position: absolute;
+  height: 80px;
+  width: 70%;
+  left: -5%;
+  bottom: 16%;
+  border-radius: 50%;
+  background: rgba(255, 235, 225, 0.13);
+  filter: blur(38px);
+  z-index: 1;
+  animation: hv10-haze-drift 38s ease-in-out infinite alternate;
+}
+
+@keyframes hv10-haze-drift {
+  from { transform: translateX(-3%); }
+  to { transform: translateX(8%); }
+}
+
+/* ============================================================
+   Minimal design-cycle toggle (temporary preview chrome, top left)
+   ============================================================ */
+
+.home-cycle-toggle {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 1000;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  color: #333;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-cycle-toggle:hover {
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 760px) {
+  /* Keep it clear of the site title on small screens. */
+  .home-cycle-toggle {
+    top: auto;
+    bottom: 14px;
+  }
+}

@@ -12,6 +12,9 @@
 }
 
 body {
+  /* Full-bleed sections use 100vw, which includes the scrollbar gutter;
+     without this the page gets a phantom horizontal scroll. */
+  overflow-x: hidden;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 18px;
   line-height: 1.75;
@@ -63,11 +66,17 @@ a:hover {
   font-weight: 700;
   color: #111;
   text-decoration: none;
+  /* Button-like hover so it's obviously the way back home. */
+  padding: 4px 12px;
+  margin-left: -12px;
+  border-radius: 999px;
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
 .site-title:hover {
   text-decoration: none;
-  color: #111;
+  color: #4183c4;
+  background: #eef4fb;
 }
 
 .site-nav a {
@@ -172,6 +181,128 @@ a:hover {
   color: #999;
 }
 
+/* Only the first aside tab pushes right; the rest sit next to it. */
+.blog-tabs a.blog-tab-aside ~ a.blog-tab-aside {
+  margin-left: 0;
+}
+
+/* Nested subsection rows under the main tabs (one row per level). */
+.blog-subtabs {
+  margin: -20px 0 28px;
+  padding-left: 12px;
+}
+
+.blog-subtabs a {
+  font-size: 0.8rem;
+  padding: 2px 10px;
+}
+
+/* Tag chips on entries and post pages. */
+.blog-entry-tag {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  color: #96abc2;
+  white-space: nowrap;
+}
+
+.blog-entry-tag:hover {
+  color: #4183c4;
+}
+
+.blog-entry-tag.is-active {
+  color: #4183c4;
+  font-weight: 600;
+}
+
+.blog-tag-filter {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.85rem;
+  color: #666;
+  margin: -12px 0 24px;
+}
+
+.blog-tag-clear {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.blog-tag-clear:hover {
+  color: #c0392b;
+}
+
+/* Section badge rendered as one pill per path segment. */
+.blog-entry-category-path {
+  display: inline-flex;
+  gap: 4px;
+  align-items: baseline;
+}
+
+/* The locked Private tab: nothing is shown until the password checks out. */
+.blog-lock {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: #666;
+}
+
+.blog-lock p {
+  margin-bottom: 12px;
+}
+
+.blog-lock-form {
+  display: flex;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.blog-lock-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.blog-lock-form button {
+  background: #4183c4;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.blog-lock-form button:disabled {
+  background: #a8c4de;
+  cursor: default;
+}
+
+.blog-lock-error {
+  margin-top: 10px;
+  color: #c0392b;
+  font-size: 0.9rem;
+}
+
+.blog-lock-toggle {
+  margin-left: 12px;
+  vertical-align: 3px;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-size: 0.75rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: #999;
+  cursor: pointer;
+}
+
+.blog-lock-toggle:hover {
+  color: #b35a00;
+  border-color: #e0b27a;
+}
+
 .blog-empty {
   color: #999;
   font-size: 0.95rem;
@@ -248,6 +379,22 @@ a:hover {
 .blog-post-category {
   font-size: 0.9rem;
   color: #4183c4;
+}
+
+.blog-post-category-sep {
+  color: #bbb;
+  font-size: 0.9rem;
+}
+
+.blog-post-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.blog-post-tags .blog-entry-tag {
+  font-size: 0.85rem;
 }
 
 /* Marker shown (only to a logged-in admin) on private posts. */
