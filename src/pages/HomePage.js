@@ -15,10 +15,12 @@ export default function HomePage() {
         <p className="home-role">CS &amp; Math | AI Safety</p>
       </div>
       <figure className="home-photo">
-        <img
-          src={summitPhoto}
-          alt="Avigya Paudel sitting on granite boulders at a mountain summit, feeding a chipmunk"
-        />
+        <div className="home-photo-crop">
+          <img
+            src={summitPhoto}
+            alt="Avigya Paudel sitting on granite boulders at a mountain summit, feeding a chipmunk"
+          />
+        </div>
       </figure>
       <Bio className="home-bio" />
       <div className="home-cta">

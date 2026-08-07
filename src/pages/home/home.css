@@ -37,12 +37,24 @@
 }
 
 .home-role {
-  font-family: var(--home-sans);
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-  color: #777;
-  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #888;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   animation: home-rise 0.8s ease 0.25s both;
+}
+
+/* Micro-label tied to the grid by a leading dash, pear-style. */
+.home-role::before {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: #b5b5b5;
 }
 
 /* ---- Bio (verbatim copy from content.js) ---- */
@@ -82,42 +94,82 @@
 
 .home-btn {
   display: inline-block;
-  padding: 11px 26px;
-  border-radius: 999px;
+  padding: 12px 20px;
+  border-radius: 2px;
   background: #111;
   color: #fff;
-  font-family: var(--home-sans);
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.home-btn::after {
+  content: '→';
+  display: inline-block;
+  margin-left: 10px;
+  transition: transform 0.25s ease;
 }
 
 .home-btn:hover {
   text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+  background: #2e2e2e;
+}
+
+.home-btn:hover::after {
+  transform: translateX(4px);
 }
 
 .home-btn-ghost {
   background: transparent;
-  border: 1px solid #d5d5d5;
-  color: #333;
+  border: 1px solid #ccc;
+  color: #111;
 }
 
 .home-btn-ghost:hover {
-  background: #f5f5f5;
-  box-shadow: none;
+  background: transparent;
+  border-color: #111;
 }
 
-/* ---- Photo ---- */
+/* ---- Photo: hairline mat frame with ✦ corner markers ---- */
 .home-photo {
   grid-area: photo;
   align-self: center;
+  position: relative;
   margin: 0;
-  overflow: hidden;
-  border-radius: 14px;
-  box-shadow: 0 18px 44px rgba(15, 35, 60, 0.14);
+  padding: 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  background: #fff;
   animation: home-rise 1s ease 0.3s both;
+}
+
+.home-photo::before,
+.home-photo::after {
+  content: '✦';
+  position: absolute;
+  font-size: 11px;
+  line-height: 1;
+  color: #9aa3ad;
+  background: #fff;
+  padding: 2px;
+}
+
+.home-photo::before {
+  top: -8px;
+  left: -7px;
+}
+
+.home-photo::after {
+  bottom: -8px;
+  right: -7px;
+}
+
+.home-photo-crop {
+  overflow: hidden;
+  border-radius: 1px;
 }
 
 .home-photo img {

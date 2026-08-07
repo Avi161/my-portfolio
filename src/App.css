@@ -11,6 +11,11 @@
   padding: 0;
 }
 
+:root {
+  --mono: 'SF Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --hairline: #e8e8e6;
+}
+
 body {
   /* Full-bleed sections use 100vw, which includes the scrollbar gutter;
      without this the page gets a phantom horizontal scroll. */
@@ -33,6 +38,35 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Drafting-table rails: two fixed hairlines framing the page. They sit in the
+   empty gutters outside every content column (700px pages, 1060px home hero). */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--hairline);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body::before {
+  left: max(14px, calc(50vw - 590px));
+}
+
+body::after {
+  right: max(14px, calc(50vw - 590px));
+}
+
+@media (max-width: 760px) {
+  body::before,
+  body::after {
+    display: none;
+  }
+}
+
 /* Layout */
 .site-container {
   max-width: 700px;
@@ -50,49 +84,131 @@ a:hover {
 
 /* ---- Header ---- */
 .site-header {
-  padding: 32px 0 24px;
-  border-bottom: 1px solid #eee;
+  position: relative;
+  padding: 26px 0 20px;
+}
+
+/* Full-bleed rule so it crosses the drafting rails. */
+.site-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: calc(-50vw + 50%);
+  width: 100vw;
+  height: 1px;
+  background: var(--hairline);
 }
 
 .header-inner {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
 }
 
+/* The way back home, tied to the grid by a leading dash. */
 .site-title {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: #111;
   text-decoration: none;
-  /* Button-like hover so it's obviously the way back home. */
-  padding: 4px 12px;
-  margin-left: -12px;
-  border-radius: 999px;
-  transition: color 0.2s ease, background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s ease;
+}
+
+.site-title::before {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: #999;
+  transition: width 0.25s ease, background 0.25s ease;
 }
 
 .site-title:hover {
   text-decoration: none;
   color: #4183c4;
-  background: #eef4fb;
+}
+
+.site-title:hover::before {
+  width: 30px;
+  background: #4183c4;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
 }
 
 .site-nav a {
-  margin-left: 24px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  font-size: 0.95rem;
-  color: #4183c4;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666;
+  padding-bottom: 2px;
+  background-image: linear-gradient(#111, #111);
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  transition: color 0.2s ease, background-size 0.25s ease;
+}
+
+.site-nav a:hover {
+  text-decoration: none;
+  color: #111;
+  background-size: 100% 1px;
+}
+
+/* Contact as the boxed action, pear-style: dark block, sliding arrow. */
+.site-nav a.site-nav-cta {
+  background-image: none;
+  background-color: #111;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.site-nav a.site-nav-cta::after {
+  content: '→';
+  display: inline-block;
+  margin-left: 8px;
+  transition: transform 0.25s ease;
+}
+
+.site-nav a.site-nav-cta:hover {
+  background-color: #2e2e2e;
+  color: #fff;
+}
+
+.site-nav a.site-nav-cta:hover::after {
+  transform: translateX(3px);
 }
 
 /* ---- Footer ---- */
 .site-footer {
+  position: relative;
   padding: 24px 0;
-  border-top: 1px solid #eee;
   margin-top: 40px;
-  font-size: 0.85rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
   color: #999;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(-50vw + 50%);
+  width: 100vw;
+  height: 1px;
+  background: var(--hairline);
 }
 
 .site-footer a {
@@ -670,12 +786,13 @@ a:hover {
 
   .header-inner {
     flex-direction: column;
-    gap: 10px;
+    align-items: flex-start;
+    gap: 14px;
   }
 
-  .site-nav a {
-    margin-left: 0;
-    margin-right: 18px;
+  .site-nav {
+    gap: 16px;
+    flex-wrap: wrap;
   }
 
   .blog-entry-header {
