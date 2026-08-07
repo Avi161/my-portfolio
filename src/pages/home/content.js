@@ -1,10 +1,6 @@
 import React from 'react';
-import profileImage from '../../components/AviPic.jpg';
 
-// Shared bio content for every homepage design candidate, so the copy only
-// lives in one place while each variant lays it out its own way.
-
-export { profileImage };
+// Bio content for the homepage, kept separate so the copy lives in one place.
 
 export const NAME = 'Avigya Paudel';
 
