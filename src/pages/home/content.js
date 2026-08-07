@@ -34,8 +34,8 @@ export function Bio({ className }) {
       <p>
         I believe we are transitioning through one of the most crucial
         phases for humanity due to AI. It is likely that we will reach a
-        point where AI is more capable than any human in any measurable
-        field that does not depend on emotions.
+        point where AI is more capable than any human in any field where
+        success is measurable and doesn't depend on emotion.
       </p>
       <p>
         My belief is that expected benefits need to outweigh the risks in
