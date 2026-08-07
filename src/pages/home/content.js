@@ -32,6 +32,18 @@ export function Bio({ className }) {
         cause unintended harm.
       </p>
       <p>
+        I believe we are transitioning through one of the most crucial
+        phases for humanity due to AI. It is likely that we will reach a
+        point where AI is more capable than any human in any measurable
+        field that does not depend on emotions.
+      </p>
+      <p>
+        My belief is that expected benefits need to outweigh the risks in
+        the long term. I aim to make as much impact as possible by taking
+        a top-down approach: focusing my skills where I can minimize risks
+        the most.
+      </p>
+      <p>
         I'm currently a researcher at{' '}
         <Ext href={LINKS.lab}>Caltech's Math+AI Lab</Ext>, working under{' '}
         <Ext href={LINKS.gukov}>Dr. Sergei Gukov</Ext>. I am working on the
