@@ -38,10 +38,9 @@ export function Bio({ className }) {
         success is measurable and doesn't depend on emotion.
       </p>
       <p>
-        My belief is that expected benefits need to outweigh the risks in
-        the long term. I aim to make as much impact as possible by taking
-        a top-down approach: focusing my skills where I can minimize risks
-        the most.
+        Expected benefits need to outweigh the risks in the long term. I
+        aim to make as much impact as possible by taking a top-down
+        approach: focusing my skills where I can minimize risks the most.
       </p>
       <p>
         I'm currently a researcher at{' '}
